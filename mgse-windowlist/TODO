@@ -1,0 +1,7 @@
+ - Make right click menu appear/disappear faster, or even without animations
+ - Reduce the gap between boxes
+ - Make the extension use more space (either by hiding the _centerBox or by telling _leftBox to fill the space)
+ - Emphasize the selected window a little more (either with more contrast/brightness, with borders, or with depth)
+ - Use Gettext to l10n labels
+ - Replace show Desktop icon with a toggle button
+
