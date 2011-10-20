@@ -334,10 +334,11 @@ function Player() {
 Player.prototype = {
     __proto__: PopupMenu.PopupMenuSection.prototype,
     
-    _init: function(owner) {
+    _init: function(system_status_button, owner) {
         PopupMenu.PopupMenuSection.prototype._init.call(this);
 
         this._owner = owner;
+        this._system_status_button = system_status_button;
         this._name = this._owner.split('.')[3];
         this._mediaServerPlayer = new MediaServer2Player(owner);
         this._mediaServer = new MediaServer2(owner);
@@ -388,7 +389,7 @@ Player.prototype = {
         this._mediaServer.getRaise(Lang.bind(this, function(sender, raise) {
             if (raise) {
                 this._raiseButton = new ControlButton('go-up',
-                    Lang.bind(this, function () { this._mediaServer.RaiseRemote(); }));
+                    Lang.bind(this, function () { this._mediaServer.RaiseRemote(); this._system_status_button.menu.actor.hide(); }));
                 this.controls.add_actor(this._raiseButton.getActor());
             }
         }));
@@ -657,7 +658,7 @@ Indicator.prototype = {
         // ensure menu is empty
         if (this._nbPlayers() == 0)
             this.menu.removeAll();
-        this._players[owner] = new Player(owner);
+        this._players[owner] = new Player(this, owner);
         this.menu.addMenuItem(this._players[owner]);
         this.menu.emit('players-loaded', true);
     },
