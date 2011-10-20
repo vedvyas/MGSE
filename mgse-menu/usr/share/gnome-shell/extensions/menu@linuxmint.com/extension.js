@@ -107,10 +107,20 @@ function ApplicationsButton() {
 }
 
 ApplicationsButton.prototype = {
-    __proto__: PanelMenu.SystemStatusButton.prototype,
+    __proto__: PanelMenu.Button.prototype,
 
     _init: function() {
-        PanelMenu.SystemStatusButton.prototype._init.call(this, 'start-here');
+        PanelMenu.Button.prototype._init.call(this, 0.0);
+        let box = new St.BoxLayout({ name: 'mintMenu' });
+        this.actor.add_actor(box);
+        this._iconBox = new St.Bin();
+        box.add(this._iconBox, { y_align: St.Align.MIDDLE, y_fill: false });        
+        this._icon = new St.Icon({ icon_name: 'start-here', style_class: 'popup-menu-icon' });
+        this._iconBox.child = this._icon;                         
+        this._label = new St.Label();
+        box.add(this._label, { y_align: St.Align.MIDDLE, y_fill: false });
+        this._label.set_text(_(" Menu"));        
+        
         this._display();
         appsys.connect('installed-changed', Lang.bind(this, this.reDisplay));
         AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this.reDisplay));

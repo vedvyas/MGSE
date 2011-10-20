@@ -596,6 +596,7 @@ function enable() {
     let _activitiesButton = Main.panel._activitiesButton;
     Main.panel._leftBox.remove_actor(_activitiesButton.actor);
     Main.panel._rightBox.insert_actor(_activitiesButton.actor, _children.length);
+    
     // Change Activities label
     _activitiesButton._label.set_text("-");            
     //_activitiesButton._label.hide();
