@@ -1,0 +1,11 @@
+Source: mgse-xrandr
+Section: admin
+Priority: optional
+Maintainer: Clement Lefebvre <root@linuxmint.com>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: mgse-xrandr
+Architecture: all
+Description: Gnome Shell Extension Monitor Status
+ Add a systems status menu for rotating monitors
