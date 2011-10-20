@@ -1,0 +1,11 @@
+Source: mgse-shutdownmenu
+Section: admin
+Priority: optional
+Maintainer: Clement Lefebvre <root@linuxmint.com>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: mgse-shutdownmenu
+Architecture: all
+Description: Gnome Shell Extension Shutdown Menu
+ Replace Suspend menu with Shutdown and add Suspend/Hibernate to Power Off dialog
