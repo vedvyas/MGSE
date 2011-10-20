@@ -1,0 +1,8 @@
+{
+"uuid": "alttab@linuxmint.com",
+"name": "Alt Tab",
+"description": "Traditional Alt Tab",
+"shell-version": [ "3.2.0" ],
+"localedir": "/usr/share/locale",
+"url": "https://github.com/linuxmint/mgse"
+}

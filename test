@@ -26,3 +26,7 @@ sudo cp -R mgse-smartoverview/usr /
 
 sudo rm -rf /usr/share/gnome-shell/extensions/shutdownmenu@linuxmint.com
 sudo cp -R mgse-shutdownmenu/usr /
+
+sudo rm -rf /usr/share/gnome-shell/extensions/alttab@linuxmint.com
+sudo cp -R mgse-alttab/usr /
+
