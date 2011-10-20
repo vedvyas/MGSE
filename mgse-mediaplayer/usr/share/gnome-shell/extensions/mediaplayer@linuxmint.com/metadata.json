@@ -1,0 +1,13 @@
+{
+"uuid": "mediaplayer@linuxmint.com",
+"name": "Media Player",
+"description": "Media Player Control in Gnome 3",
+"original-author": "eon@patapon.info",
+"shell-version": [ "3.1.90", "3.1.91", "3.1.92", "3.2" ],
+"players": [ "clementine", "mpd", "banshee", "rhythmbox", "rhythmbox3", "pragha", "quodlibet", "guayadeque", "amarok", "googlemusicframe", "xbmc" ],
+"support_seek": [ "clementine", "banshee", "rhythmbox", "rhythmbox3", "quodlibet", "amarok" ],
+"locale": "/usr/share/locale",
+"path": "/usr/share/gnome-shell/extensions/mediaplayer@linuxmint.com",
+"url": "http://github.com/linuxmint/mgse"
+}
+

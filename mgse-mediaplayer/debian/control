@@ -1,0 +1,11 @@
+Source: mgse-mediaplayer
+Section: admin
+Priority: optional
+Maintainer: Clement Lefebvre <root@linuxmint.com>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: mgse-mediaplayer
+Architecture: all
+Description: Gnome Shell Extension Media Player
+ Media Player Extension

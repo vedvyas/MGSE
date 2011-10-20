@@ -5,3 +5,14 @@ sudo cp -R mgse-menu/usr /
 
 sudo rm -rf /usr/share/gnome-shell/extensions/windowlist@linuxmint.com
 sudo cp -R mgse-windowlist/usr /
+
+sudo rm -rf /usr/share/gnome-shell/extensions/windowlist@linuxmint.com
+sudo cp -R mgse-windowlist/usr /
+
+sudo rm -rf /usr/share/gnome-shell/extensions/noa11y@linuxmint.com
+sudo cp -R mgse-noa11y/usr /
+
+sudo rm -rf /usr/share/gnome-shell/extensions/mediaplayer@linuxmint.com
+sudo cp -R mgse-mediaplayer/usr /
+
+
