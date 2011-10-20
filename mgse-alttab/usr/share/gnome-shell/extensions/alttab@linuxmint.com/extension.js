@@ -25,7 +25,7 @@ const N_ = function(e) { return e };
 
 const POPUP_FADE_TIME = 0.1; // seconds
 
-const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.alternate-tab';
+const SETTINGS_SCHEMA = 'linuxmint.mgse.alttab';
 const SETTINGS_BEHAVIOUR_KEY = 'behaviour';
 const SETTINGS_FIRST_TIME_KEY = 'first-time';
 

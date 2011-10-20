@@ -1,11 +1,11 @@
 <schemalist gettext-domain="gnome-shell-extensions">
-  <enum id="org.gnome.shell.extensions.alternate-tab.BehaviourMode">
+  <enum id="linuxmint.mgse.alttab.BehaviourMode">
     <value value="0" nick="native"/>
     <value value="1" nick="all_thumbnails"/>
     <value value="2" nick="workspace_icons"/>
   </enum>
-  <schema id="org.gnome.shell.extensions.alternate-tab" path="/org/gnome/shell/extensions/alternate-tab/">
-    <key name="behaviour" enum="org.gnome.shell.extensions.alternate-tab.BehaviourMode">
+  <schema id="linuxmint.mgse.alttab" path="/linuxmint/mgse/alttab/">
+    <key name="behaviour" enum="linuxmint.mgse.alttab.BehaviourMode">
       <default>'native'</default>
       <summary>The alt tab behaviour.</summary>
       <description>Sets the Alt-Tab behaviour. Possible values are: native, all_thumbnails and workspace_icons.</description>

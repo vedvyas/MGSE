@@ -1,6 +1,6 @@
 #!/bin/bash
 
 sudo rm -rf /usr/share/gnome-shell/extensions/alttab@linuxmint.com
-sudo rm /usr/share/glib-2.0/schemas/org.gnome.shell.extensions.alternate-tab.gschema.xml
+sudo rm /usr/share/glib-2.0/schemas/linuxmint.mgse.alttab.gschema.xml
 sudo cp -R usr /
 sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
