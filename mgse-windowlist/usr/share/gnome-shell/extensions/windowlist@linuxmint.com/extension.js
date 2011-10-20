@@ -583,41 +583,51 @@ ShowDesktopButton.prototype = {
 
 function init(extensionMeta) {
     imports.gettext.bindtextdomain('gnome-shell-extensions', extensionMeta.localedir);
+    appMenu = Main.panel._appMenu;
+    clock = Main.panel._dateMenu;
+    activitiesButton = Main.panel._activitiesButton;
+    activitiesButtonLabel = Main.panel._activitiesButton._label.get_text();
+    windowList = new WindowList();
+    button = new ShowDesktopButton();
 }
 
 function enable() {
 	/* Move Clock to the right */
-    let _children = Main.panel._rightBox.get_children();
-    let _clock    = Main.panel._dateMenu;    
-    Main.panel._centerBox.remove_actor(_clock.actor);
-    Main.panel._rightBox.insert_actor(_clock.actor, _children.length);
+    let _children = Main.panel._rightBox.get_children();    
+    Main.panel._centerBox.remove_actor(clock.actor);
+    Main.panel._rightBox.insert_actor(clock.actor, _children.length);
     
-    // Move Activities button to the right
-    let _activitiesButton = Main.panel._activitiesButton;
-    Main.panel._leftBox.remove_actor(_activitiesButton.actor);
-    Main.panel._rightBox.insert_actor(_activitiesButton.actor, _children.length);
-    
-    // Change Activities label
-    _activitiesButton._label.set_text("-");            
-    //_activitiesButton._label.hide();
+    // Move Activities button to the right and change its label
+    Main.panel._leftBox.remove_actor(activitiesButton.actor);
+    Main.panel._rightBox.insert_actor(activitiesButton.actor, _children.length);
+    activitiesButton._label.set_text("-");
             
-    /* Remove Application Menu */
-    let appMenu = Main.panel._appMenu;
+    /* Remove Application Menu */  
     Main.panel._leftBox.remove_actor(appMenu.actor);
         
-    // Create a show desktop button
-    let button = new ShowDesktopButton();
+    // Create a show desktop button   
     Main.panel._leftBox.add(button.actor, { x_fill: true, y_fill: true });
     
-    /* Create a Window List */
-    let windowList = new WindowList();
+    /* Create a Window List */  
     Main.panel._leftBox.add(windowList.actor, { x_fill: true, y_fill: true });
 }
 
 function disable() {
-    /* Revert to the default appDisplay */
-    let windowList = new WindowList();
-    let appMenu = Main.panel._appMenu;    
-    Main.panel._leftBox.remove_actor(windowList);
-    Main.panel._leftBox.add(appMenu.actor);    
+    // Place back the clock   
+    Main.panel._rightBox.remove_actor(clock.actor); 
+    Main.panel._centerBox.add_actor(clock.actor);   
+    
+    // Place back the Activities button
+    Main.panel._rightBox.remove_actor(activitiesButton.actor);
+    Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
+    activitiesButton._label.set_text(activitiesButtonLabel);
+    
+    // Place back the Application Menu
+    Main.panel._leftBox.add_actor(appMenu.actor);
+    
+    // Remove the show desktop button   
+    Main.panel._leftBox.remove_actor(button.actor);
+    
+    // Remove the window list
+    Main.panel._leftBox.remove_actor(windowList.actor);
 }

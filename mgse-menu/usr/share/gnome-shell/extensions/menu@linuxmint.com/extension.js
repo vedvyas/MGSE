@@ -243,21 +243,16 @@ ApplicationsButton.prototype = {
 	 }
 };
 
-let appsMenuButton;
-
 function enable() {   
-    Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);
-    Main.panel._leftBox.child_set(appsMenuButton.actor, { y_fill : true } );
+    Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);    
     Main.panel._menus.addMenu(appsMenuButton.menu);
 }
 
 function disable() {
-    appsMenuButton.destroy();
+    Main.panel._leftBox.remove_actor(appsMenuButton.actor);    
+    Main.panel._menus.removeMenu(appsMenuButton.menu);    
 }
 
 function init() {
     appsMenuButton = new ApplicationsButton();
-    Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);
-    Main.panel._leftBox.child_set(appsMenuButton.actor, { y_fill : true } );
-    Main.panel._menus.addMenu(appsMenuButton.menu);      
 }
