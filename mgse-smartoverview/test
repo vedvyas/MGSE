@@ -1,4 +1,6 @@
 #!/bin/bash
 
 sudo rm -rf /usr/share/gnome-shell/extensions/smartoverview@linuxmint.com
+sudo rm /usr/share/glib-2.0/schemas/linuxmint.mgse.smartoverview.gschema.xml
 sudo cp -R usr /
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas/

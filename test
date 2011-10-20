@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo rm /usr/share/glib-2.0/schemas/linuxmint.mgse.*.gschema.xml
+sudo rm -rf /usr/share/glib-2.0/schemas/linuxmint.mgse.*.gschema.xml
 
 sudo rm -rf /usr/share/gnome-shell/extensions/menu@linuxmint.com
 sudo cp -R mgse-menu/usr /

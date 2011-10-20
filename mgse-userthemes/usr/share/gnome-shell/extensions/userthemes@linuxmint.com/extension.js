@@ -6,7 +6,7 @@ const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Main = imports.ui.main;
 
-const SETTINGS_SCHEMA = 'org.gnome.shell.extensions.user-theme';
+const SETTINGS_SCHEMA = 'linuxmint.mgse.userthemes';
 const SETTINGS_KEY = 'name';
 
 function ThemeManager() {

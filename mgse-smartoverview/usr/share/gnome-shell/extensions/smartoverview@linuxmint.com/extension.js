@@ -117,7 +117,7 @@ function resetState() {
 function enable() {
     resetState();
 
-    let settings = new Gio.Settings({ schema: 'org.gnome.shell.extensions.native-window-placement' });
+    let settings = new Gio.Settings({ schema: 'linuxmint.mgse.smartoverview' });
     let placementStrategy = settings.get_enum('strategy');
     let signalId = settings.connect('changed::strategy', function() {
         placementStrategy = settings.get_enum('strategy');
