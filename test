@@ -32,4 +32,7 @@ sudo cp -R mgse-shutdownmenu/usr /
 sudo rm -rf /usr/share/gnome-shell/extensions/alttab@linuxmint.com
 sudo cp -R mgse-alttab/usr /
 
+sudo rm -rf /usr/share/gnome-shell/extensions/bottompanel@linuxmint.com
+sudo cp -R msge-bottompanel/usr /
+
 sudo glib-compile-schemas /usr/share/glib-2.0/schemas/

@@ -1,0 +1,7 @@
+{
+"shell-version": ["3.2"], 
+"uuid": "bottompanel@linuxmint.com", 
+"name": "Bottom Panel",
+"description": "Add a panel to the bottom of the screen", 
+"url": "http://github.com/linuxmint/mgse"
+}
