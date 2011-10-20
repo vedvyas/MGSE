@@ -782,6 +782,8 @@ function enable() {
 
     bottomPanel = new BottomPanel();
     bottomPanel.relayout();
+    
+    
 }
 
 function disable() {
