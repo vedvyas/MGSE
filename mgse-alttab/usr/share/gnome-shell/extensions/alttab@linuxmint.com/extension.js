@@ -179,6 +179,7 @@ AppIcon.prototype = {
 
         this.actor = new St.BoxLayout({ style_class: 'alt-tab-app',
                                          vertical: true });
+                                         
         this.icon = null;
         this._iconBin = new St.Bin({ x_fill: true, y_fill: true });
 
@@ -549,15 +550,25 @@ WindowList.prototype = {
 	            if (app_wins[j] == win) {
                         ap1 = new AltTab.AppIcon(apps[i]);
                         let mutterWindow = win.get_compositor_private();
-                        let windowTexture = mutterWindow.get_texture ();
-                        let [width, height] = windowTexture.get_size();
-                        let scale = Math.min(1.0, 128 / width, 128 / height);
-
+                        let windowTexture = mutterWindow.get_texture();
+                        let [width, height] = windowTexture.get_size();                                                                        
+                        let scale = Math.min(1.0, 128 / width, 128 / width);
                         let clone = new Clutter.Clone ({ source: windowTexture, reactive: true,  width: width * scale, height: height * scale });
-                        ap1.icon = ap1.app.create_icon_texture(128);
-                        ap1._iconBin.set_size(128,128);
-	                ap1._iconBin.child=clone;
-
+                        
+                        ap1.icon = ap1.app.create_icon_texture(32);
+                        
+                        let l = new Clutter.BinLayout();
+                        let b = new Clutter.Box();                        
+                        b.set_layout_manager(l);
+                        b.set_width(128);
+                        
+                        b.add_actor(clone);
+                        l.add(ap1.icon, Clutter.BinAlignment.END, Clutter.BinAlignment.END);
+                                                                                       
+                        ap1._iconBin.set_width(128);
+                        ap1._iconBin.child=b;
+                        //ap1._iconBin.add_actor(ap1.icon);
+                        //ap1._iconBin.add_actor(clone);
                         ap1.label.text=win.get_title();
 	            }
 	        }
