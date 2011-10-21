@@ -19,10 +19,12 @@ For the extension to work:
        Alt+F2, and type "r"
        or from a command line: gnome-shell --replace
 
-GNOME SHELL DEVELOPMENT RESOURCES
+DEVELOPMENT RESOURCES
 
 http://live.gnome.org/GnomeShell/Extensions
 http://blog.fpmurphy.com/2011/04/gnome-3-shell-extensions.html
+http://developer.gnome.org/
+http://developer.ubuntu.com/resources/
 
 GNOME 3.2
 
