@@ -243,6 +243,8 @@ ApplicationsButton.prototype = {
 	 }
 };
 
+let appsMenuButton;
+
 function enable() {   
     Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);    
     Main.panel._menus.addMenu(appsMenuButton.menu);

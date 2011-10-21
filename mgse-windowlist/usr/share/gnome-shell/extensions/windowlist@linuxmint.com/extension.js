@@ -147,7 +147,7 @@ AppMenuButton.prototype = {
         }));
         this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
         
-        this.metaWindow.connect('notify::title', Lang.bind(this, function () {
+        this._updateCaptionId = this.metaWindow.connect('notify::title', Lang.bind(this, function () {
             this._label.setText(this.metaWindow.get_title());
         }));
                 
@@ -173,7 +173,7 @@ AppMenuButton.prototype = {
     },
     
     _onDestroy: function() {
-        this.metaWindow.disconnect(); //Please check this
+        this.metaWindow.disconnect(this._updateCaptionId);
     },
     
     doFocus: function() {
@@ -580,6 +580,13 @@ ShowDesktopButton.prototype = {
         this._desktopShown = !this._desktopShown;
     }
 };
+
+let appMenu;
+let clock;
+let activitiesButton;
+let activitiesButtonLabel;
+let windowList;
+let button;
 
 function init(extensionMeta) {
     imports.gettext.bindtextdomain('gnome-shell-extensions', extensionMeta.localedir);

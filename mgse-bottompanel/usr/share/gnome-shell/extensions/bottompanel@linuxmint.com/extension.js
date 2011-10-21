@@ -149,7 +149,7 @@ AppMenuButton.prototype = {
         }));
         this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
         
-        this.metaWindow.connect('notify::title', Lang.bind(this, function () {
+        this._updateCaptionId = this.metaWindow.connect('notify::title', Lang.bind(this, function () {
             this._label.setText(this.metaWindow.get_title());
         }));
                 
@@ -175,7 +175,7 @@ AppMenuButton.prototype = {
     },
     
     _onDestroy: function() {
-        this.metaWindow.disconnect(); //Please check this
+        this.metaWindow.disconnect(this._updateCaptionId);
     },
     
     doFocus: function() {
@@ -713,6 +713,11 @@ BottomPanel.prototype = {
         this.actor.set_size(primary.width, -1);
     },
 };
+
+let origShowTray;
+let myShowTray;
+let origShowWorkspaceSwitcher;
+let myShowWorkspaceSwitcher;
 
 function init(extensionMeta) {
     let localePath = extensionMeta.path + '/locale';

@@ -1,7 +1,8 @@
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
 
-idx = null;
+let indicator;
+let idx = null;
 
 function init(extensionMeta) {
     indicator = new Panel.STANDARD_STATUS_AREA_SHELL_IMPLEMENTATION["a11y"];

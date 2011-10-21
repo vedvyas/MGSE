@@ -24,6 +24,7 @@ const _ = Gettext.gettext;
 const N_ = function(e) { return e };
 
 const POPUP_FADE_TIME = 0.1; // seconds
+const POPUP_DELAY_TIMEOUT = 150; // milliseconds
 
 const SETTINGS_SCHEMA = 'linuxmint.mgse.alttab';
 const SETTINGS_BEHAVIOUR_KEY = 'behaviour';

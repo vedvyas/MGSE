@@ -105,7 +105,7 @@ Rect.prototype = {
     }
 };
 
-let winInjections, workspaceInjections, connectedSignals;
+let winInjections, workspaceInjections, workViewInjections, connectedSignals;
 
 function resetState() {
     winInjections = { };
