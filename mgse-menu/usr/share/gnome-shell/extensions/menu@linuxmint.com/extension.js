@@ -240,7 +240,14 @@ ApplicationsButton.prototype = {
 			let applicationButton = new ApplicationButton(app);			
 			this.applicationsBox.add_actor(applicationButton.actor);			
 		 }
-	 }
+	 },
+     
+     setBottomPosition: function(value){
+         // Need to find a way to do this
+         if (value){
+         }else{
+         }
+     }
 };
 
 let appsMenuButton;
@@ -249,13 +256,14 @@ function enable() {
     Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);    
     Main.panel._menus.addMenu(appsMenuButton.menu);
     
-    /* Look for mintPanel */
-    if (Main.panel._mintPanel != null) {
-        global.log("mintMenu found mintPanel");
-    }
-    
     /* Tell the main panel we're here */
     Main.panel._mintMenu = appsMenuButton;
+    
+    /* Look for mintPanel */
+    if (Main.panel._mintPanel != null) {
+        //Main.panel._mintPanel.moveMe(appsMenuButton);
+        global.log("mintMenu found mintPanel");
+    }
 }
 
 function disable() {

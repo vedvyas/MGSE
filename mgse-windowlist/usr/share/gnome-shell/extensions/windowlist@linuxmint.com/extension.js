@@ -21,16 +21,19 @@ const PANEL_ICON_SIZE = 24;
 const SPINNER_ANIMATION_TIME = 1;
 
 
-function AppMenuButtonRightClickMenu(actor, app, metaWindow) {
-    this._init(actor, app, metaWindow);
+function AppMenuButtonRightClickMenu(actor, app, metaWindow, bottomPosition) {
+    this._init(actor, app, metaWindow, bottomPosition);
 }
 
 AppMenuButtonRightClickMenu.prototype = {
     __proto__: PopupMenu.PopupMenu.prototype,
 
-    _init: function(actor, app, metaWindow) {
+    _init: function(actor, app, metaWindow, bottomPosition) {
         //take care of menu initialization
-        PopupMenu.PopupMenu.prototype._init.call(this, actor, 0.0, St.Side.TOP, 0);
+        if (bottomPosition)
+            PopupMenu.PopupMenu.prototype._init.call(this, actor, 0.0, St.Side.BOTTOM, 0);
+        else
+            PopupMenu.PopupMenu.prototype._init.call(this, actor, 0.0, St.Side.TOP, 0);
         Main.uiGroup.add_actor(this.actor);
         //Main.chrome.addActor(this.actor, { visibleInOverview: true,
         //                                   affectsStruts: false });
@@ -91,15 +94,15 @@ AppMenuButtonRightClickMenu.prototype = {
 
 };
 
-function AppMenuButton(app, metaWindow, animation) {
-    this._init(app, metaWindow, animation);
+function AppMenuButton(app, metaWindow, animation, bottomPosition) {
+    this._init(app, metaWindow, animation, bottomPosition);
 }
 
 AppMenuButton.prototype = {
 //    __proto__ : AppMenuButton.prototype,
 
     
-    _init: function(app, metaWindow, animation) {
+    _init: function(app, metaWindow, animation, bottomPosition) {
 
 	this.actor = new St.Bin({ style_class: 'panel-button',
                                   reactive: true,
@@ -168,7 +171,7 @@ AppMenuButton.prototype = {
         
         //set up the right click menu
         this._menuManager = new PopupMenu.PopupMenuManager(this);
-        this.rightClickMenu = new AppMenuButtonRightClickMenu(this.actor, this.app, this.metaWindow);
+        this.rightClickMenu = new AppMenuButtonRightClickMenu(this.actor, this.app, this.metaWindow, bottomPosition);
         this._menuManager.addMenu(this.rightClickMenu);
     },
     
@@ -353,6 +356,8 @@ WindowList.prototype = {
                                         style_class: 'window-list-box' });
         this.actor._delegate = this;
         this._windows = [];
+        
+        this._bottomPosition = false;
 
         let tracker = Shell.WindowTracker.get_default();
         tracker.connect('notify::focus-app', Lang.bind(this, this._onFocus));
@@ -395,7 +400,7 @@ WindowList.prototype = {
             if ( metaWindow && tracker.is_window_interesting(metaWindow) ) {
                 let app = tracker.get_window_app(metaWindow);
                 if ( app ) {
-                    this._windows[i] = new AppMenuButton(app, metaWindow, false);
+                    this._windows[i] = new AppMenuButton(app, metaWindow, false, this._bottomPosition);
                     this.actor.add(this._windows[i].actor);
                 }
             }
@@ -439,7 +444,7 @@ WindowList.prototype = {
         let app = tracker.get_window_app(metaWindow);
         if ( app && tracker.is_window_interesting(metaWindow) ) {
             let len = this._windows.length;
-            this._windows[len] = new AppMenuButton(app, metaWindow, true);
+            this._windows[len] = new AppMenuButton(app, metaWindow, true, this._bottomPosition);
             this.actor.add(this._windows[len].actor);
         }
     },
@@ -520,6 +525,11 @@ WindowList.prototype = {
 			childBox.x2 = allocWidth;
 		}
 		this._rightBox.allocate(childBox, flags);
+    },
+     
+    setBottomPosition: function(value){
+        this._bottomPosition = value;
+        this._refreshItems();
     }
 };
 
@@ -618,13 +628,16 @@ function enable() {
     /* Create a Window List */  
     Main.panel._leftBox.add(windowList.actor, { x_fill: true, y_fill: true });
     
+    /* Tell the main panel we're here */
+    Main.panel._mintWindowList = windowList;
+    Main.panel._mintShowDesktopButton = button;
+    
     /* Look for mintPanel */
     if (Main.panel._mintPanel != null) {
         global.log("mintWindowList found mintPanel");
+        Main.panel._mintPanel.moveMe(button);
+        Main.panel._mintPanel.moveMe(windowList);
     }
-    
-    /* Tell the main panel we're here */
-    Main.panel._mintWindowList = windowList;
 }
 
 function disable() {

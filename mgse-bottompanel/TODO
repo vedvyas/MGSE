@@ -1,0 +1,4 @@
+ - Put things back in their place if the bottompanel extension is disabled
+ - Similarly, when an extension has been packed into the bottom panel and gets disabled, it needs to remove itself from the bottom panel rather than the top one
+ - Find a way for the menu slide to the top when packed in the bottom panel
+ - Handle a packing order : as we don't know which one of the menu and the windowlist will be loaded first, we have to find a way to make sure things are always in the same place
