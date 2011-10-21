@@ -617,6 +617,14 @@ function enable() {
     
     /* Create a Window List */  
     Main.panel._leftBox.add(windowList.actor, { x_fill: true, y_fill: true });
+    
+    /* Look for mintPanel */
+    if (Main.panel._mintPanel != null) {
+        global.log("mintWindowList found mintPanel");
+    }
+    
+    /* Tell the main panel we're here */
+    Main.panel._mintWindowList = windowList;
 }
 
 function disable() {

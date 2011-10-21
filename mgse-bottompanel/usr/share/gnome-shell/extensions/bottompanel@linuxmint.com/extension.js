@@ -788,7 +788,18 @@ function enable() {
     bottomPanel = new BottomPanel();
     bottomPanel.relayout();
     
+    /* Look for the menu */
+    if (Main.panel._mintMenu != null) {
+        global.log("mintPanel found mintmenu");
+    }
     
+    /* Look for the window list */
+    if (Main.panel._mintWindowList != null) {
+        global.log("mintPanel found mintWindowList");
+    }
+    
+    /* Tell the main panel we're here */
+    Main.panel._mintPanel = bottomPanel;
 }
 
 function disable() {
