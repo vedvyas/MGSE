@@ -231,7 +231,7 @@ function enable() {
     
     /* Look for the menu */
     if (Main.panel._mintMenu != null) {
-        //bottomPanel.moveMe(Main.panel._mintMenu);
+        bottomPanel.moveMe(Main.panel._mintMenu);
         global.log("mintPanel found mintmenu");
     }
     
