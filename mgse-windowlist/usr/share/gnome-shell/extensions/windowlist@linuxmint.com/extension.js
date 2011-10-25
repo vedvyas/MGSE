@@ -21,14 +21,14 @@ const PANEL_ICON_SIZE = 24;
 const SPINNER_ANIMATION_TIME = 1;
 
 
-function AppMenuButtonRightClickMenu(actor, app, metaWindow, bottomPosition) {
-    this._init(actor, app, metaWindow, bottomPosition);
+function AppMenuButtonRightClickMenu(actor, app, metaWindow) {
+    this._init(actor, app, metaWindow);
 }
 
 AppMenuButtonRightClickMenu.prototype = {
     __proto__: PopupMenu.PopupMenu.prototype,
 
-    _init: function(actor, app, metaWindow, bottomPosition) {
+    _init: function(actor, app, metaWindow) {
         //take care of menu initialization
         if (bottomPosition)
             PopupMenu.PopupMenu.prototype._init.call(this, actor, 0.0, St.Side.BOTTOM, 0);
@@ -44,17 +44,25 @@ AppMenuButtonRightClickMenu.prototype = {
         this.app = app;
 
         this.itemCloseWindow = new PopupMenu.PopupMenuItem('Close');
-        this.itemCloseWindow.connect('activate', Lang.bind(this, this._onCloseWindowActivate));
-        this.addMenuItem(this.itemCloseWindow);
+        this.itemCloseWindow.connect('activate', Lang.bind(this, this._onCloseWindowActivate));        
         if (metaWindow.minimized)
             this.itemMinimizeWindow = new PopupMenu.PopupMenuItem('Restore');
         else
             this.itemMinimizeWindow = new PopupMenu.PopupMenuItem('Minimize');
-        this.itemMinimizeWindow.connect('activate', Lang.bind(this, this._onMinimizeWindowActivate));
-        this.addMenuItem(this.itemMinimizeWindow);
+        this.itemMinimizeWindow.connect('activate', Lang.bind(this, this._onMinimizeWindowActivate));        
         this.itemMaximizeWindow = new PopupMenu.PopupMenuItem('Maximize');
-        this.itemMaximizeWindow.connect('activate', Lang.bind(this, this._onMaximizeWindowActivate));
-        this.addMenuItem(this.itemMaximizeWindow);
+        this.itemMaximizeWindow.connect('activate', Lang.bind(this, this._onMaximizeWindowActivate));        
+        
+        if (bottomPosition) {
+            this.addMenuItem(this.itemMinimizeWindow);
+            this.addMenuItem(this.itemMaximizeWindow);
+            this.addMenuItem(this.itemCloseWindow);                        
+        }
+        else {
+            this.addMenuItem(this.itemCloseWindow);
+            this.addMenuItem(this.itemMaximizeWindow);
+            this.addMenuItem(this.itemMinimizeWindow);
+        }            
     },
     
     _onWindowMinimized: function(actor, event){
@@ -94,15 +102,15 @@ AppMenuButtonRightClickMenu.prototype = {
 
 };
 
-function AppMenuButton(app, metaWindow, animation, bottomPosition) {
-    this._init(app, metaWindow, animation, bottomPosition);
+function AppMenuButton(app, metaWindow, animation) {
+    this._init(app, metaWindow, animation);
 }
 
 AppMenuButton.prototype = {
 //    __proto__ : AppMenuButton.prototype,
 
     
-    _init: function(app, metaWindow, animation, bottomPosition) {
+    _init: function(app, metaWindow, animation) {
 
 	this.actor = new St.Bin({ style_class: 'panel-button',
                                   reactive: true,
@@ -171,7 +179,7 @@ AppMenuButton.prototype = {
         
         //set up the right click menu
         this._menuManager = new PopupMenu.PopupMenuManager(this);
-        this.rightClickMenu = new AppMenuButtonRightClickMenu(this.actor, this.app, this.metaWindow, bottomPosition);
+        this.rightClickMenu = new AppMenuButtonRightClickMenu(this.actor, this.app, this.metaWindow);
         this._menuManager.addMenu(this.rightClickMenu);
     },
     
@@ -356,9 +364,7 @@ WindowList.prototype = {
                                         style_class: 'window-list-box' });
         this.actor._delegate = this;
         this._windows = [];
-        
-        this._bottomPosition = false;
-
+                
         let tracker = Shell.WindowTracker.get_default();
         tracker.connect('notify::focus-app', Lang.bind(this, this._onFocus));
 
@@ -400,7 +406,7 @@ WindowList.prototype = {
             if ( metaWindow && tracker.is_window_interesting(metaWindow) ) {
                 let app = tracker.get_window_app(metaWindow);
                 if ( app ) {
-                    this._windows[i] = new AppMenuButton(app, metaWindow, false, this._bottomPosition);
+                    this._windows[i] = new AppMenuButton(app, metaWindow, false);
                     this.actor.add(this._windows[i].actor);
                 }
             }
@@ -444,7 +450,7 @@ WindowList.prototype = {
         let app = tracker.get_window_app(metaWindow);
         if ( app && tracker.is_window_interesting(metaWindow) ) {
             let len = this._windows.length;
-            this._windows[len] = new AppMenuButton(app, metaWindow, true, this._bottomPosition);
+            this._windows[len] = new AppMenuButton(app, metaWindow, true);
             this.actor.add(this._windows[len].actor);
         }
     },
@@ -528,7 +534,7 @@ WindowList.prototype = {
     },
      
     setBottomPosition: function(value){
-        this._bottomPosition = value;
+        bottomPosition = value;
         this._refreshItems();
     }
 };
@@ -597,8 +603,10 @@ let activitiesButton;
 let activitiesButtonLabel;
 let windowList;
 let button;
+let bottomPosition;
 
 function init(extensionMeta) {
+    bottomPosition = false;
     imports.gettext.bindtextdomain('gnome-shell-extensions', extensionMeta.localedir);
     appMenu = Main.panel._appMenu;
     clock = Main.panel._dateMenu;
