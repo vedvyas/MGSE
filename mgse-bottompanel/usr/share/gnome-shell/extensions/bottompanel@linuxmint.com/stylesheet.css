@@ -1,9 +1,16 @@
 #bottomPanel {
-    color: #ffffff;
-    background-color: black;
-    border-image: url("bottom-panel-border.svg") 1;
-    font-size: 10.5pt;
-    height: 1.86em;
+    	border: 1px solid rgba(255,255,255,0.2);
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-radius: 0px;
+	color: rgba(255,255,255,1.0);
+	background-gradient-direction: vertical;
+	background-gradient-start: rgba(0,0,0,0.8);
+	background-gradient-end: rgba(0,0,0,0.6);
+	height: 24px;
+	font-size: 8.5pt;
+	font-weight: normal;    
 }
 
 .message-button {
