@@ -102,15 +102,99 @@ FavoritesButton.prototype = {
     }
 };
 
+
+function MintButton(menuAlignment) {
+    this._init(menuAlignment);
+}
+
+MintButton.prototype = {
+    __proto__: PanelMenu.ButtonBox.prototype,
+
+    _init: function(menuAlignment) {
+        PanelMenu.ButtonBox.prototype._init.call(this, { reactive: true,
+                                               can_focus: true,
+                                               track_hover: true });
+
+        this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
+        this.actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));
+        this.menu = new PopupMenu.PopupMenu(this.actor, menuAlignment, mintMenuOrientation);
+        this.menu.actor.add_style_class_name('panel-menu');
+        this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateChanged));
+        this.menu.actor.connect('key-press-event', Lang.bind(this, this._onMenuKeyPress));
+        Main.uiGroup.add_actor(this.menu.actor);
+        this.menu.actor.hide();
+    },
+
+    _onButtonPress: function(actor, event) {
+        if (!this.menu.isOpen) {
+            // Setting the max-height won't do any good if the minimum height of the
+            // menu is higher then the screen; it's useful if part of the menu is
+            // scrollable so the minimum height is smaller than the natural height
+            let monitor = Main.layoutManager.primaryMonitor;
+            this.menu.actor.style = ('max-height: ' +
+                                     Math.round(monitor.height - Main.panel.actor.height) +
+                                     'px;');
+        }
+        this.menu.toggle();
+    },
+
+    _onSourceKeyPress: function(actor, event) {
+        let symbol = event.get_key_symbol();
+        if (symbol == Clutter.KEY_space || symbol == Clutter.KEY_Return) {
+            this.menu.toggle();
+            return true;
+        } else if (symbol == Clutter.KEY_Escape && this.menu.isOpen) {
+            this.menu.close();
+            return true;
+        } else if (symbol == Clutter.KEY_Down) {
+            if (!this.menu.isOpen)
+                this.menu.toggle();
+            this.menu.actor.navigate_focus(this.actor, Gtk.DirectionType.DOWN, false);
+            return true;
+        } else
+            return false;
+    },
+
+    _onMenuKeyPress: function(actor, event) {
+        let symbol = event.get_key_symbol();
+        if (symbol == Clutter.KEY_Left || symbol == Clutter.KEY_Right) {
+            let focusManager = St.FocusManager.get_for_stage(global.stage);
+            let group = focusManager.get_group(this.actor);
+            if (group) {
+                let direction = (symbol == Clutter.KEY_Left) ? Gtk.DirectionType.LEFT : Gtk.DirectionType.RIGHT;
+                group.navigate_focus(this.actor, direction, false);
+                return true;
+            }
+        }
+        return false;
+    },
+
+    _onOpenStateChanged: function(menu, open) {
+        if (open)
+            this.actor.add_style_pseudo_class('active');
+        else
+            this.actor.remove_style_pseudo_class('active');
+    },
+
+    destroy: function() {
+        this.actor._delegate = null;
+
+        this.menu.destroy();
+        this.actor.destroy();
+
+        this.emit('destroy');
+    }
+};
+
 function ApplicationsButton() {
     this._init();
 }
 
 ApplicationsButton.prototype = {
-    __proto__: PanelMenu.Button.prototype,
+    __proto__: MintButton.prototype,
 
     _init: function() {
-        PanelMenu.Button.prototype._init.call(this, 0.0);
+        MintButton.prototype._init.call(this, 0.0);
         let box = new St.BoxLayout({ name: 'mintMenu' });
         this.actor.add_actor(box);
         this._iconBox = new St.Bin();
@@ -245,14 +329,24 @@ ApplicationsButton.prototype = {
      setBottomPosition: function(value){
          // Need to find a way to do this
          if (value){
+             //this.menu._arrowSide = St.Side.BOTTOM;
+             //mintMenuOrientation = St.Side.BOTTOM;
+             //this.disable();
+             //this.enable();
          }else{
+             //this.menu._arrowSide = St.Side.TOP;
+             //mintMenuOrientation = St.Side.TOP;
+             //this.disable();
+             //this.enable();
          }
      }
 };
 
 let appsMenuButton;
+let mintMenuOrientation = St.Side.BOTTOM;
 
-function enable() {   
+function enable() {  
+    appsMenuButton = new ApplicationsButton(); 
     Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);    
     Main.panel._menus.addMenu(appsMenuButton.menu);
     
@@ -261,7 +355,7 @@ function enable() {
     
     /* Look for mintPanel */
     if (Main.panel._mintPanel != null) {
-        //Main.panel._mintPanel.moveMe(appsMenuButton);
+        Main.panel._mintPanel.moveMe(appsMenuButton);
         global.log("mintMenu found mintPanel");
     }
 }
@@ -271,6 +365,4 @@ function disable() {
     Main.panel._menus.removeMenu(appsMenuButton.menu);    
 }
 
-function init() {
-    appsMenuButton = new ApplicationsButton();
-}
+function init() {}
