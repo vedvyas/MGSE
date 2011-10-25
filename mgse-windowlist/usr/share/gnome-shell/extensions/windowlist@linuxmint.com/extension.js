@@ -599,7 +599,6 @@ ShowDesktopButton.prototype = {
 };
 
 let appMenu;
-let clock;
 let activitiesButton;
 let activitiesButtonLabel;
 let windowList;
@@ -617,8 +616,7 @@ function init(extensionMeta) {
         bottomPosition = false;
     }    
     imports.gettext.bindtextdomain('gnome-shell-extensions', extensionMeta.localedir);
-    appMenu = Main.panel._appMenu;
-    clock = Main.panel._dateMenu;
+    appMenu = Main.panel._appMenu;    
     activitiesButton = Main.panel._activitiesButton;
     activitiesButtonLabel = Main.panel._activitiesButton._label.get_text();
     windowList = new WindowList();
@@ -629,17 +627,12 @@ function enable() {
     
     if (!bottomPosition) {
         // Move Activities button to the right and change its label
-        //Main.panel._leftBox.remove_actor(activitiesButton.actor);
-        //Main.panel._rightBox.insert_actor(activitiesButton.actor, _children.length);
-        //activitiesButton._label.set_text("-");
+        Main.panel._leftBox.remove_actor(activitiesButton.actor);
+        Main.panel._rightBox.insert_actor(activitiesButton.actor, _children.length);
+        activitiesButton._label.set_text("-");
                 
         /* Remove Application Menu */  
-        Main.panel._leftBox.remove_actor(appMenu.actor);
-        
-        /* Move Clock to the right */
-        let _children = Main.panel._rightBox.get_children();    
-        Main.panel._centerBox.remove_actor(clock.actor);
-        Main.panel._rightBox.insert_actor(clock.actor, _children.length);
+        Main.panel._leftBox.remove_actor(appMenu.actor);          
     }
             
     // Create a show desktop button   
@@ -661,17 +654,16 @@ function enable() {
 }
 
 function disable() {
-    // Place back the clock   
-    Main.panel._rightBox.remove_actor(clock.actor); 
-    Main.panel._centerBox.add_actor(clock.actor);   
+        
+    if (!bottomPosition) {
+        // Place back the Activities button
+        Main.panel._rightBox.remove_actor(activitiesButton.actor);
+        Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
+        activitiesButton._label.set_text(activitiesButtonLabel);
     
-    // Place back the Activities button
-    //Main.panel._rightBox.remove_actor(activitiesButton.actor);
-    //Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
-    //activitiesButton._label.set_text(activitiesButtonLabel);
-    
-    // Place back the Application Menu
-    Main.panel._leftBox.add_actor(appMenu.actor);
+        // Place back the Application Menu
+        Main.panel._leftBox.add_actor(appMenu.actor);
+    }
     
     // Remove the show desktop button   
     Main.panel._leftBox.remove_actor(button.actor);
