@@ -13,6 +13,7 @@ const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const AppDisplay = imports.ui.appDisplay;
 const AltTab = imports.ui.altTab;
+const Gio = imports.gi.Gio;
 
 const Gettext = imports.gettext.domain('gnome-shell-extensions');
 const _ = Gettext.gettext;
@@ -606,7 +607,15 @@ let button;
 let bottomPosition;
 
 function init(extensionMeta) {
-    bottomPosition = false;
+    // Find out if the bottom panel extension is enabled    
+    let settings = new Gio.Settings({ schema: 'org.gnome.shell' });
+    let enabled_extensions = settings.get_strv('enabled-extensions');
+    if (enabled_extensions.indexOf("bottompanel@linuxmint.com") != -1) {
+        bottomPosition = true;
+    }
+    else {
+        bottomPosition = false;
+    }    
     imports.gettext.bindtextdomain('gnome-shell-extensions', extensionMeta.localedir);
     appMenu = Main.panel._appMenu;
     clock = Main.panel._dateMenu;
@@ -616,24 +625,27 @@ function init(extensionMeta) {
     button = new ShowDesktopButton();
 }
 
-function enable() {
-	/* Move Clock to the right */
-    let _children = Main.panel._rightBox.get_children();    
-    Main.panel._centerBox.remove_actor(clock.actor);
-    Main.panel._rightBox.insert_actor(clock.actor, _children.length);
+function enable() {	
     
-    // Move Activities button to the right and change its label
-    Main.panel._leftBox.remove_actor(activitiesButton.actor);
-    Main.panel._rightBox.insert_actor(activitiesButton.actor, _children.length);
-    activitiesButton._label.set_text("-");
-            
-    /* Remove Application Menu */  
-    Main.panel._leftBox.remove_actor(appMenu.actor);
+    if (!bottomPosition) {
+        // Move Activities button to the right and change its label
+        //Main.panel._leftBox.remove_actor(activitiesButton.actor);
+        //Main.panel._rightBox.insert_actor(activitiesButton.actor, _children.length);
+        //activitiesButton._label.set_text("-");
+                
+        /* Remove Application Menu */  
+        Main.panel._leftBox.remove_actor(appMenu.actor);
         
+        /* Move Clock to the right */
+        let _children = Main.panel._rightBox.get_children();    
+        Main.panel._centerBox.remove_actor(clock.actor);
+        Main.panel._rightBox.insert_actor(clock.actor, _children.length);
+    }
+            
     // Create a show desktop button   
     Main.panel._leftBox.add(button.actor, { x_fill: true, y_fill: true });
     
-    /* Create a Window List */  
+    /* Create a Window List */ 
     Main.panel._leftBox.add(windowList.actor, { x_fill: true, y_fill: true });
     
     /* Tell the main panel we're here */
@@ -654,9 +666,9 @@ function disable() {
     Main.panel._centerBox.add_actor(clock.actor);   
     
     // Place back the Activities button
-    Main.panel._rightBox.remove_actor(activitiesButton.actor);
-    Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
-    activitiesButton._label.set_text(activitiesButtonLabel);
+    //Main.panel._rightBox.remove_actor(activitiesButton.actor);
+    //Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
+    //activitiesButton._label.set_text(activitiesButtonLabel);
     
     // Place back the Application Menu
     Main.panel._leftBox.add_actor(appMenu.actor);
