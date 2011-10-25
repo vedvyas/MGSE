@@ -139,7 +139,17 @@ BottomPanel.prototype = {
     
     moveMe: function(item) {
         item.actor.get_parent().remove_actor(item.actor);
-        this.leftBox.add(item.actor);
+        
+        if (item==Main.panel._mintMenu) {
+            this.leftBox.insert_actor(item.actor, 0);
+        }
+        else if (item==Main.panel._mintWindowList) {
+            let _children = this.leftBox.get_children(); 
+            this.leftBox.insert_actor(item.actor, _children.length);
+        }
+        else {
+            this.leftBox.add(item.actor);
+        }
         
         if (item==Main.panel._mintMenu || item==Main.panel._mintWindowList) item.setBottomPosition(true);
     }
