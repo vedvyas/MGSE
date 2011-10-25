@@ -11,6 +11,7 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const AppFavorites = imports.ui.appFavorites;
 const Gtk = imports.gi.Gtk;
+const Gio = imports.gi.Gio;
 
 const ICON_SIZE = 16;
 const FAV_ICON_SIZE = 30;
@@ -343,7 +344,7 @@ ApplicationsButton.prototype = {
 };
 
 let appsMenuButton;
-let mintMenuOrientation = St.Side.BOTTOM;
+let mintMenuOrientation;
 
 function enable() {  
     appsMenuButton = new ApplicationsButton(); 
@@ -365,4 +366,14 @@ function disable() {
     Main.panel._menus.removeMenu(appsMenuButton.menu);    
 }
 
-function init() {}
+function init() {
+    // Find out if the bottom panel extension is enabled    
+    let settings = new Gio.Settings({ schema: 'org.gnome.shell' });
+    let enabled_extensions = settings.get_strv('enabled-extensions');
+    if (enabled_extensions.indexOf("bottompanel@linuxmint.com") != -1) {
+        mintMenuOrientation = St.Side.BOTTOM;
+    }
+    else {
+        mintMenuOrientation = St.Side.TOP;
+    }
+}
