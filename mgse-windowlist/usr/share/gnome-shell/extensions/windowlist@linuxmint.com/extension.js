@@ -364,7 +364,7 @@ WindowList.prototype = {
         this.actor = new St.BoxLayout({ name: 'windowList',
                                         style_class: 'window-list-box' });
         this.actor._delegate = this;
-        this._windows = [];
+        this._windows = new Array();
                 
         let tracker = Shell.WindowTracker.get_default();
         tracker.connect('notify::focus-app', Lang.bind(this, this._onFocus));
@@ -392,7 +392,7 @@ WindowList.prototype = {
     
     _refreshItems: function() {
         this.actor.destroy_children();
-        this._windows = [];
+        this._windows = new Array();
 
         let metaWorkspace = global.screen.get_active_workspace();
         let windows = metaWorkspace.list_windows();
@@ -407,8 +407,9 @@ WindowList.prototype = {
             if ( metaWindow && tracker.is_window_interesting(metaWindow) ) {
                 let app = tracker.get_window_app(metaWindow);
                 if ( app ) {
-                    this._windows[i] = new AppMenuButton(app, metaWindow, false);
-                    this.actor.add(this._windows[i].actor);
+                    let appbutton = new AppMenuButton(app, metaWindow, false);
+                    this._windows.push(appbutton);
+                    this.actor.add(appbutton.actor);
                 }
             }
         }
@@ -450,9 +451,9 @@ WindowList.prototype = {
         let tracker = Shell.WindowTracker.get_default();
         let app = tracker.get_window_app(metaWindow);
         if ( app && tracker.is_window_interesting(metaWindow) ) {
-            let len = this._windows.length;
-            this._windows[len] = new AppMenuButton(app, metaWindow, true);
-            this.actor.add(this._windows[len].actor);
+            let appbutton = new AppMenuButton(app, metaWindow, true);
+            this._windows.push(appbutton);
+            this.actor.add(appbutton.actor);
         }
     },
 
