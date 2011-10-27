@@ -1,3 +1,9 @@
+mgse-userthemes (1.0.1) lisa; urgency=low
+
+  * Changed compatibility to "3.2"
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu,  27 Oct 2011 19:39:00 +0000
+
 mgse-userthemes (1.0.0) lisa; urgency=low
 
   * Initial release
