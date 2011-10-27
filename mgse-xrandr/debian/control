@@ -7,5 +7,6 @@ Standards-Version: 3.7.2
 
 Package: mgse-xrandr
 Architecture: all
+Depends: gir1.2-gnomedesktop-3.0
 Description: Gnome Shell Extension Monitor Status
  Add a systems status menu for rotating monitors
