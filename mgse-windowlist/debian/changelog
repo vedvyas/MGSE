@@ -1,3 +1,9 @@
+mgse-windowlist (1.0.1) lisa; urgency=low
+
+  * glebihan: Fixed bug when changing workspace
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu,  27 Oct 2011 10:50:00 +0000
+
 mgse-windowlist (1.0.0) lisa; urgency=low
 
   * Initial release
