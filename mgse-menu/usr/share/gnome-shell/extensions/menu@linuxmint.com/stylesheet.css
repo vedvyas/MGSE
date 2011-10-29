@@ -11,6 +11,20 @@
     padding-right: 10px;
     padding-bottom: 10px;    
 }
+
+.places-box {
+  width: 70%;
+  margin: auto;
+  padding: 10px;
+  border: 0px solid #666;  
+}
+.places-button {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;    
+}
+
 .categories-box {
     padding-top: 10px;
     padding-left: 30px;

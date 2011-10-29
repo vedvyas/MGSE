@@ -5,7 +5,7 @@ const GMenu = imports.gi.GMenu;
 const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-
+const Clutter = imports.gi.Clutter;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
@@ -67,6 +67,27 @@ ApplicationButton.prototype = {
     }
 };
 
+function PlaceButton(app) {
+    this._init(app);
+}
+
+PlaceButton.prototype = {
+    _init: function(place) {
+		this.place = place;			        
+        this.actor = new St.Button({ reactive: true, label: this.place.name, style_class: 'application-button', x_align: St.Align.START });        
+        this.buttonbox = new St.BoxLayout();
+        this.label = new St.Label({ text: this.place.name, style_class: 'application-button-label' });        
+        this.icon = place.iconFactory(APPLICATION_ICON_SIZE); 
+        this.buttonbox.add_actor(this.icon);
+        this.buttonbox.add_actor(this.label);
+        this.actor.set_child(this.buttonbox);        
+        this.actor.connect('clicked', Lang.bind(this, function() {      
+			this.place.launch();
+            appsMenuButton.menu.close();
+		}));
+    }
+};
+
 function CategoryButton(app) {
     this._init(app);
 }
@@ -82,6 +103,22 @@ CategoryButton.prototype = {
         this.buttonbox.add_actor(this.label);
         this.actor.set_child(this.buttonbox);
         //this.actor.set_tooltip_text(category.get_name());       
+    }
+};
+
+function PlaceCategoryButton(app) {
+    this._init(app);
+}
+
+PlaceCategoryButton.prototype = {
+    _init: function(category) {	
+        this.actor = new St.Button({ reactive: true, label: _("Places"), style_class: 'category-button', x_align: St.Align.START  });        
+        this.buttonbox = new St.BoxLayout();
+        this.label = new St.Label({ text: _("Places"), style_class: 'category-button-label' }); 
+        this.icon = new St.Icon({icon_name: "folder", icon_size: CATEGORY_ICON_SIZE, icon_type: St.IconType.FULLCOLOR});             
+        this.buttonbox.add_actor(this.icon);
+        this.buttonbox.add_actor(this.label);
+        this.actor.set_child(this.buttonbox);        
     }
 };
 
@@ -102,7 +139,6 @@ FavoritesButton.prototype = {
         }));
     }
 };
-
 
 function MintButton(menuAlignment) {
     this._init(menuAlignment);
@@ -240,13 +276,13 @@ ApplicationsButton.prototype = {
                 this._loadCategory(iter.get_directory());
             }
         }
-    },
+    },    
                
     _display : function() {
         let section = new PopupMenu.PopupMenuSection();        
         this.menu.addMenuItem(section);            
         let favoritesTitle = new St.Label({ track_hover: true, style_class: 'favorites-title', text: "Favorites" });
-        this.favoritesBox = new St.BoxLayout({ style_class: 'favorites-box', vertical: true }); 
+        this.favoritesBox = new St.BoxLayout({ style_class: 'favorites-box', vertical: true });         
         
         this.categoriesApplicationsBox = new St.BoxLayout();
         this.categoriesBox = new St.BoxLayout({ style_class: 'categories-box', vertical: true }); 
@@ -269,13 +305,12 @@ ApplicationsButton.prototype = {
                 ++j;
             }
         }
-        
-        
+                                              
         let applicationsTitle = new St.Label({ style_class: 'applications-title', text: "Applications" });
  
         this.mainBox = new St.BoxLayout({ style_class: 'applications-box', vertical:false });
         //this.rightBox = new St.BoxLayout({ style_class: 'applications-box', vertical:true });        
-        //this.rightBox.add_actor(this.categoriesApplicationsBox, { span: 1 });
+        //this.rightBox.add_actor(this.categoriesApplicationsBox, { span: 1 });        
         
 		//this.mainBox.add_actor(applicationsTitle, { span: 1 });
 		this.mainBox.add_actor(this.favoritesBox, { span: 1 });
@@ -306,6 +341,15 @@ ApplicationsButton.prototype = {
                 this.categoriesBox.add_actor(categoryButton.actor);
             }
         }
+        
+        this.placesButton = new PlaceCategoryButton();
+        this.placesButton.actor.connect('clicked', Lang.bind(this, function() {
+            this._select_places(this.placesButton);
+        }));
+        this.placesButton.actor.connect('enter-event', Lang.bind(this, function() {
+            this._select_places(this.placesButton);
+        }));
+        this.categoriesBox.add_actor(this.placesButton.actor);
         
         // Not necessary yet.. will be used to show all apps in an "all category"
         //for (directory in this.applicationsByCategory) {
@@ -339,6 +383,39 @@ ApplicationsButton.prototype = {
 		 }
 	 },
      
+     _select_places : function(button) {			 
+		 let actors = this.applicationsBox.get_children();
+		 for (var i=0; i<actors.length; i++) {
+			let actor = actors[i];			
+			this.applicationsBox.remove_actor(actor);	
+		 }
+         
+         let actors = this.categoriesBox.get_children();
+         for (var i=0; i<actors.length; i++){
+             let actor = actors[i];      
+             if (actor==button.actor) actor.style_class = "category-button-selected";
+             else actor.style_class = "category-button";
+         }
+         
+         //let places = Main.placesManager.getDefaultPlaces();
+         //for (let id = 0; id < places.length; id++) {             
+         //    let button = new PlaceButton(places[id]);                
+         //    this.applicationsBox.add_actor(button.actor);	                                        
+         //} 
+         
+         let bookmarks = Main.placesManager.getBookmarks();
+         for (let id = 0; id < bookmarks.length; id++) {             
+             let button = new PlaceButton(bookmarks[id]);                
+             this.applicationsBox.add_actor(button.actor);	                                        
+         } 
+         
+         let devices = Main.placesManager.getMounts();      
+         for (let id = 0; id < devices.length; id++) {             
+             let button = new PlaceButton(devices[id]);                
+             this.applicationsBox.add_actor(button.actor);	                                        
+         }      
+	 },
+     
      setBottomPosition: function(value){
          // Need to find a way to do this
          if (value){
@@ -357,6 +434,7 @@ ApplicationsButton.prototype = {
 
 let appsMenuButton;
 let mintMenuOrientation;
+let icon_path;
 
 function enable() {  
     appsMenuButton = new ApplicationsButton(); 
