@@ -200,7 +200,12 @@ ApplicationsButton.prototype = {
         this.actor.add_actor(box);
         this._iconBox = new St.Bin();
         box.add(this._iconBox, { y_align: St.Align.MIDDLE, y_fill: false });        
-        this._icon = new St.Icon({ icon_name: 'start-here', style_class: 'popup-menu-icon' });
+        
+        let icon_file = icon_path + "menu.svg";
+        let file = Gio.file_new_for_path(icon_file);
+        let icon_uri = file.get_uri(); 
+        this._icon = St.TextureCache.get_default().load_uri_sync(1, icon_uri, 22, 22);        
+        //this._icon = new St.Icon({ icon_name: 'start-here', style_class: 'popup-menu-icon' });
         this._iconBox.child = this._icon;                         
         this._label = new St.Label();
         box.add(this._label, { y_align: St.Align.MIDDLE, y_fill: false });
@@ -366,7 +371,10 @@ function disable() {
     Main.panel._menus.removeMenu(appsMenuButton.menu);    
 }
 
-function init() {
+function init(metadata) {
+    
+    icon_path = metadata.path + '/icons/';
+    
     // Find out if the bottom panel extension is enabled    
     let settings = new Gio.Settings({ schema: 'org.gnome.shell' });
     let enabled_extensions = settings.get_strv('enabled-extensions');
