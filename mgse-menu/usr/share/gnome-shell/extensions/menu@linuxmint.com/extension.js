@@ -246,7 +246,7 @@ ApplicationsButton.prototype = {
         let section = new PopupMenu.PopupMenuSection();        
         this.menu.addMenuItem(section);            
         let favoritesTitle = new St.Label({ track_hover: true, style_class: 'favorites-title', text: "Favorites" });
-        this.favoritesBox = new St.BoxLayout({ style_class: 'favorites-box' }); 
+        this.favoritesBox = new St.BoxLayout({ style_class: 'favorites-box', vertical: true }); 
         
         this.categoriesApplicationsBox = new St.BoxLayout();
         this.categoriesBox = new St.BoxLayout({ style_class: 'categories-box', vertical: true }); 
@@ -273,10 +273,17 @@ ApplicationsButton.prototype = {
         
         let applicationsTitle = new St.Label({ style_class: 'applications-title', text: "Applications" });
  
-		section.actor.add_actor(favoritesTitle, { span: 1 });
-        section.actor.add_actor(this.favoritesBox, { span: 1 });
-		section.actor.add_actor(applicationsTitle, { span: 1 });
-		section.actor.add_actor(this.categoriesApplicationsBox, { span: 1 });
+        this.mainBox = new St.BoxLayout({ style_class: 'applications-box', vertical:false });
+        //this.rightBox = new St.BoxLayout({ style_class: 'applications-box', vertical:true });        
+        //this.rightBox.add_actor(this.categoriesApplicationsBox, { span: 1 });
+        
+		//this.mainBox.add_actor(applicationsTitle, { span: 1 });
+		this.mainBox.add_actor(this.favoritesBox, { span: 1 });
+        this.mainBox.add_actor(this.categoriesApplicationsBox, { span: 1 });
+        //this.mainBox.add_actor(favoritesTitle, { span: 1 });
+        
+		
+        section.actor.add_actor(this.mainBox);
         
 		this.applicationsByCategory = {};
         let tree = appsys.get_tree();
