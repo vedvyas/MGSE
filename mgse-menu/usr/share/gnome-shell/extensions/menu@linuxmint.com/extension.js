@@ -67,16 +67,17 @@ ApplicationButton.prototype = {
     }
 };
 
-function PlaceButton(app) {
-    this._init(app);
+function PlaceButton(place, button_name) {
+    this._init(place, button_name);
 }
 
 PlaceButton.prototype = {
-    _init: function(place) {
-		this.place = place;			        
-        this.actor = new St.Button({ reactive: true, label: this.place.name, style_class: 'application-button', x_align: St.Align.START });        
+    _init: function(place, button_name) {
+		this.place = place;			
+        this.button_name = button_name;        
+        this.actor = new St.Button({ reactive: true, label: this.button_name, style_class: 'application-button', x_align: St.Align.START });        
         this.buttonbox = new St.BoxLayout();
-        this.label = new St.Label({ text: this.place.name, style_class: 'application-button-label' });        
+        this.label = new St.Label({ text: this.button_name, style_class: 'application-button-label' });        
         this.icon = place.iconFactory(APPLICATION_ICON_SIZE); 
         this.buttonbox.add_actor(this.icon);
         this.buttonbox.add_actor(this.label);
@@ -399,19 +400,19 @@ ApplicationsButton.prototype = {
          
          //let places = Main.placesManager.getDefaultPlaces();
          //for (let id = 0; id < places.length; id++) {             
-         //    let button = new PlaceButton(places[id]);                
+         //    let button = new PlaceButton(places[id], places[id].name);                
          //    this.applicationsBox.add_actor(button.actor);	                                        
          //} 
          
          let bookmarks = Main.placesManager.getBookmarks();
          for (let id = 0; id < bookmarks.length; id++) {             
-             let button = new PlaceButton(bookmarks[id]);                
+             let button = new PlaceButton(bookmarks[id], bookmarks[id].name);                
              this.applicationsBox.add_actor(button.actor);	                                        
          } 
          
          let devices = Main.placesManager.getMounts();      
          for (let id = 0; id < devices.length; id++) {             
-             let button = new PlaceButton(devices[id]);                
+             let button = new PlaceButton(devices[id], devices[id].name);                
              this.applicationsBox.add_actor(button.actor);	                                        
          }      
 	 },
