@@ -32,3 +32,16 @@ GNOME 3.2
 Gnome 3.2 introduces many changes.. and so almost all extensions written for previous versions of Gnome Shell are likely not to work :)
 
 main() is replaced by init(), enabled(), disabled()... and there's many other changes as well ;)
+
+MODULES
+
+It's not possible to implement modules. However, it's possible for the code to be located in different files.
+
+For instance, within the extension directory, you can have:
+
+extension.js
+myclass.js (which implements defines a class Myclass)
+
+And you can refer to Myclass with the following call:
+
+const Myclass = Extension.myclass;
