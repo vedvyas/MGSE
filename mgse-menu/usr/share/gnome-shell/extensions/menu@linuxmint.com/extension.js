@@ -93,7 +93,7 @@ FavoritesButton.prototype = {
     _init: function(app) {
         this.actor = new St.Button({ reactive: true, style_class: 'favorites-button' });
         this.actor.set_child(app.create_icon_texture(FAV_ICON_SIZE));
-        this.actor.set_tooltip_text(app.get_name());
+        //this.actor.set_tooltip_text(app.get_name()); #Doesn't appear in the right place
         this._app = app;
 
         this.actor.connect('clicked', Lang.bind(this, function() {		
