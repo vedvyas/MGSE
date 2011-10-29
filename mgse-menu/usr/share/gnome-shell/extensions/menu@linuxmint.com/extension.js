@@ -201,7 +201,7 @@ ApplicationsButton.prototype = {
         this._iconBox = new St.Bin();
         box.add(this._iconBox, { y_align: St.Align.MIDDLE, y_fill: false });        
         
-        let icon_file = icon_path + "menu.svg";
+        let icon_file = icon_path + "menu.png";
         let file = Gio.file_new_for_path(icon_file);
         let icon_uri = file.get_uri(); 
         this._icon = St.TextureCache.get_default().load_uri_sync(1, icon_uri, 22, 22);        
