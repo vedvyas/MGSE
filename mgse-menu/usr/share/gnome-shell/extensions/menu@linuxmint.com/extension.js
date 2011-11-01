@@ -58,8 +58,8 @@ ApplicationButton.prototype = {
         this.buttonbox.add_actor(this.icon);
         this.buttonbox.add_actor(this.label);
         this.actor.set_child(this.buttonbox);
-        if (this.app.get_description())
-            this.actor.set_tooltip_text(this.app.get_description());
+        /*if (this.app.get_description())
+            this.actor.set_tooltip_text(this.app.get_description());*/
         this.actor.connect('clicked', Lang.bind(this, function() {      
 			this.app.open_new_window(-1);
             appsMenuButton.menu.close();
@@ -303,6 +303,15 @@ ApplicationsButton.prototype = {
             if (app) {        
                 let button = new FavoritesButton(app, this.menu);                
                 this.favoritesBox.add_actor(button.actor);
+                button.actor.connect('enter-event', Lang.bind(this, function() {
+                   this.selectedAppTitle.set_text(button._app.get_name());
+                   if (button._app.get_description()) this.selectedAppDescription.set_text(button._app.get_description());
+                   else this.selectedAppDescription.set_text("");
+                }));
+                button.actor.connect('leave-event', Lang.bind(this, function() {
+                   this.selectedAppTitle.set_text("");
+                   this.selectedAppDescription.set_text("");
+                }));
                 ++j;
             }
         }
@@ -359,6 +368,13 @@ ApplicationsButton.prototype = {
 		//		let app = apps[i];			
 		//	}						
 		//}
+         
+        this.selectedAppBox = new St.BoxLayout({ style_class: 'selected-app-box', vertical: true }); 
+        this.selectedAppTitle = new St.Label({ style_class: 'selected-app-title', text: "" });
+        this.selectedAppBox.add_actor(this.selectedAppTitle);
+        this.selectedAppDescription = new St.Label({ style_class: 'selected-app-description', text: "" });
+        this.selectedAppBox.add_actor(this.selectedAppDescription);
+        section.actor.add_actor(this.selectedAppBox);
     },
     
      _select_category : function(dir, categoryButton) {			 
@@ -380,7 +396,16 @@ ApplicationsButton.prototype = {
 		 for (var i=0; i<apps.length; i++) {
 			let app = apps[i];			
 			let applicationButton = new ApplicationButton(app);			
-			this.applicationsBox.add_actor(applicationButton.actor);			
+			this.applicationsBox.add_actor(applicationButton.actor);		
+         applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
+            this.selectedAppTitle.set_text(applicationButton.app.get_name());
+            if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
+            else this.selectedAppDescription.set_text("");
+         }));
+         applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
+            this.selectedAppTitle.set_text("");
+            this.selectedAppDescription.set_text("");
+         }));
 		 }
 	 },
      

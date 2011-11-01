@@ -12,6 +12,15 @@
     padding-bottom: 10px;    
 }
 
+.favorites-button:hover {
+    color: white;
+	 background-gradient-direction: vertical;
+	 background-gradient-start: rgba(255,255,255,0.2);
+	 background-gradient-end: rgba(255,255,255,0.08);
+	 box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    border-radius: 4px;
+}
+
 .places-box {
   width: 70%;
   margin: auto;
@@ -74,8 +83,12 @@
 }
 
 .application-button:hover {
-    background-color: #969696;
-    border-radius: 8px;
+    color: white;
+	 background-gradient-direction: vertical;
+	 background-gradient-start: rgba(255,255,255,0.2);
+	 background-gradient-end: rgba(255,255,255,0.08);
+	 box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    border-radius: 4px;
 }
 
 .application-button-label { 
@@ -92,11 +105,15 @@
 
 .category-button-selected {
     padding-top: 7px;
-    padding-left: 14px;
+    padding-left: 7px;
     padding-right: 7px;
     padding-bottom: 7px; 
-    background-color: #969696;
-    border-radius: 8px;
+    color: white;
+	 background-gradient-direction: vertical;
+	 background-gradient-start: rgba(255,255,255,0.2);
+	 background-gradient-end: rgba(255,255,255,0.08);
+	 box-shadow: inset 0px 0px 1px 1px rgba(255,255,255,0.06);
+    border-radius: 4px;
 }
 
 .category-button-label { 
@@ -106,4 +123,19 @@
 .category-button-button:hover {
     background-color: #969696;
     border-radius: 8px;
+}
+
+.selected-app-box {
+    padding-right: 30px;
+    padding-left: 28px;
+    text-align: right;
+}
+
+.selected-app-title {
+    font-weight: bold;
+    font-size: small;
+}
+
+.selected-app-description {
+    max-width: 150px;
 }
