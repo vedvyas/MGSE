@@ -232,7 +232,7 @@ ApplicationsButton.prototype = {
     __proto__: MintButton.prototype,
 
     _init: function() {
-        MintButton.prototype._init.call(this, 0.0);
+        MintButton.prototype._init.call(this, 1);
         let box = new St.BoxLayout({ name: 'mintMenu' });
         this.actor.add_actor(box);
         this._iconBox = new St.Bin();
