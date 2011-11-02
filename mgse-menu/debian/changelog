@@ -1,3 +1,12 @@
+mgse-menu (1.0.3) lisa; urgency=low
+
+  * Aligned on the left
+  * Better hover effect for applications
+  * Hover effect for favorites
+  * Description label instead of tooltip
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed,  2 Nov 2011 14:02:00 +0000
+
 mgse-menu (1.0.2) lisa; urgency=low
 
   * Branded icon
