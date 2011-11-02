@@ -248,9 +248,25 @@ ApplicationsButton.prototype = {
         box.add(this._label, { y_align: St.Align.MIDDLE, y_fill: false });
         this._label.set_text(_(" Menu"));        
         
+        this._searchInactiveIcon = new St.Icon({ style_class: 'search-entry-icon',
+                                           icon_name: 'edit-find',
+                                           icon_type: St.IconType.SYMBOLIC });
+        this._searchActiveIcon = new St.Icon({ style_class: 'search-entry-icon',
+                                         icon_name: 'edit-clear',
+                                         icon_type: St.IconType.SYMBOLIC });
+        this._searchTimeoutId = 0;
+        this._searchIconClickedId = 0;
+        
         this._display();
         appsys.connect('installed-changed', Lang.bind(this, this.reDisplay));
         AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this.reDisplay));
+        
+        this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateChanged));
+        
+    },
+    
+    _onOpenStateChanged: function(menu, open) {
+       if (!open) this.resetSearch();
     },
 
     reDisplay : function() {
@@ -285,7 +301,22 @@ ApplicationsButton.prototype = {
         let favoritesTitle = new St.Label({ track_hover: true, style_class: 'favorites-title', text: "Favorites" });
         this.favoritesBox = new St.BoxLayout({ style_class: 'favorites-box', vertical: true });         
         
+        let rightPane = new St.BoxLayout({ vertical: true });
+        
+        this.searchBox = new St.BoxLayout({ style_class: 'search_box' });
+        rightPane.add_actor(this.searchBox);
+        this.searchEntry = new St.Entry({ name: 'searchEntry',
+                                     hint_text: _("Type to search..."),
+                                     track_hover: true,
+                                     can_focus: true });
+        this.searchEntry.set_secondary_icon(this._searchInactiveIcon);
+        this.searchBox.add_actor(this.searchEntry);
+        this.searchActive = false;
+        this.searchEntryText = this.searchEntry.clutter_text;
+        this.searchEntryText.connect('text-changed', Lang.bind(this, this._onSearchTextChanged));
+        
         this.categoriesApplicationsBox = new St.BoxLayout();
+        rightPane.add_actor(this.categoriesApplicationsBox);
         this.categoriesBox = new St.BoxLayout({ style_class: 'categories-box', vertical: true }); 
         this.applicationsScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade applications-scrollbox' });
         this.applicationsBox = new St.BoxLayout({ style_class: 'applications-box', vertical:true });
@@ -324,7 +355,7 @@ ApplicationsButton.prototype = {
         
 		//this.mainBox.add_actor(applicationsTitle, { span: 1 });
 		this.mainBox.add_actor(this.favoritesBox, { span: 1 });
-        this.mainBox.add_actor(this.categoriesApplicationsBox, { span: 1 });
+        this.mainBox.add_actor(rightPane, { span: 1 });
         //this.mainBox.add_actor(favoritesTitle, { span: 1 });
         
 		
@@ -346,7 +377,7 @@ ApplicationsButton.prototype = {
 					this._select_category(dir, categoryButton);
 				}));
 				categoryButton.actor.connect('enter-event', Lang.bind(this, function() {
-					this._select_category(dir, categoryButton);
+					if (!this.searchActive) this._select_category(dir, categoryButton);
 				}));
                 this.categoriesBox.add_actor(categoryButton.actor);
             }
@@ -377,7 +408,8 @@ ApplicationsButton.prototype = {
         section.actor.add_actor(this.selectedAppBox);
     },
     
-     _select_category : function(dir, categoryButton) {			 
+     _select_category : function(dir, categoryButton) {	
+       this.resetSearch();
 		 let actors = this.applicationsBox.get_children();
 		 for (var i=0; i<actors.length; i++) {
 			let actor = actors[i];			
@@ -408,6 +440,35 @@ ApplicationsButton.prototype = {
          }));
 		 }
 	 },
+    
+    _displaySearchResults: function(results){
+       let actors = this.applicationsBox.get_children();
+		 for (var i=0; i<actors.length; i++) {
+			let actor = actors[i];			
+			this.applicationsBox.remove_actor(actor);	
+		 }
+         
+         let actors = this.categoriesBox.get_children();
+
+         for (var i=0; i<actors.length; i++){
+             actors[i].style_class = "category-button";
+         }
+         
+         for (var i=0; i<results.length; i++) {
+            let app = results[i];			
+            let applicationButton = new ApplicationButton(app);			
+            this.applicationsBox.add_actor(applicationButton.actor);		
+            applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
+               this.selectedAppTitle.set_text(applicationButton.app.get_name());
+               if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
+               else this.selectedAppDescription.set_text("");
+            }));
+            applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
+               this.selectedAppTitle.set_text("");
+               this.selectedAppDescription.set_text("");
+            }));
+          }
+    },
      
      _select_places : function(button) {			 
 		 let actors = this.applicationsBox.get_children();
@@ -455,7 +516,63 @@ ApplicationsButton.prototype = {
              //this.disable();
              //this.enable();
          }
-     }
+     },
+     
+     resetSearch: function(){
+        this.searchEntry.set_text("");
+        global.stage.set_key_focus(this.actor);
+        this.searchActive = false;
+     },
+     
+     _onSearchTextChanged: function (se, prop) {
+        this.searchActive = this.searchEntry.get_text() != '';
+        if (this.searchActive) {
+            this.searchEntry.set_secondary_icon(this._searchActiveIcon);
+
+            if (this._searchIconClickedId == 0) {
+                this._searchIconClickedId = this.searchEntry.connect('secondary-icon-clicked',
+                    Lang.bind(this, function() {
+                        this.resetSearch();
+                    }));
+            }
+        } else {
+            if (this._searchIconClickedId > 0)
+                this.searchEntry.disconnect(this._searchIconClickedId);
+            this._searchIconClickedId = 0;
+
+            this.searchEntry.set_secondary_icon(this._searchInactiveIcon);
+        }
+        if (!this.searchActive) {
+            if (this._searchTimeoutId > 0) {
+                Mainloop.source_remove(this._searchTimeoutId);
+                this._searchTimeoutId = 0;
+            }
+            return;
+        }
+        if (this._searchTimeoutId > 0)
+            return;
+        this._searchTimeoutId = Mainloop.timeout_add(150, Lang.bind(this, this._doSearch));
+    },
+    
+    _doSearch: function(){
+       this._searchTimeoutId = 0;
+       let pattern = this.searchEntryText.get_text().replace(/^\s+/g, '').replace(/\s+$/g, '').toLowerCase();
+       global.log("====> "+pattern);
+       
+       var results = new Array();
+       
+       for (directory in this.applicationsByCategory) {
+          let apps = this.applicationsByCategory[directory];		
+          for (var i=0; i<apps.length; i++) {
+            let app = apps[i];	
+            if (app.get_name().toLowerCase().indexOf(pattern)!=-1) results.push(app);
+          }
+       }
+       
+       this._displaySearchResults(results);
+
+       return false;
+    }
 };
 
 let appsMenuButton;

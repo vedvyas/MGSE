@@ -139,3 +139,7 @@
 .selected-app-description {
     max-width: 150px;
 }
+
+.search_box {
+   padding-left: 30px;
+}
