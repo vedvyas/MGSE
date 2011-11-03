@@ -442,7 +442,7 @@ ApplicationsButton.prototype = {
 		 }
 	 },
     
-    _displaySearchResults: function(results){
+    _displaySearchResults: function(appsResults, placesResults){
        let actors = this.applicationsBox.get_children();
 		 for (var i=0; i<actors.length; i++) {
 			let actor = actors[i];			
@@ -455,8 +455,8 @@ ApplicationsButton.prototype = {
              actors[i].style_class = "category-button";
          }
          
-         for (var i=0; i<results.length; i++) {
-            let app = results[i];			
+         for (var i=0; i<appsResults.length; i++) {
+            let app = appsResults[i];			
             let applicationButton = new ApplicationButton(app);			
             this.applicationsBox.add_actor(applicationButton.actor);		
             applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
@@ -469,6 +469,12 @@ ApplicationsButton.prototype = {
                this.selectedAppDescription.set_text("");
             }));
           }
+         
+         for (var i=0; i<placesResults.length; i++) {
+            let place = placesResults[i];			
+            let button = new PlaceButton(place, place.name);                
+            this.applicationsBox.add_actor(button.actor);
+         }
     },
      
      _select_places : function(button) {			 
@@ -558,19 +564,30 @@ ApplicationsButton.prototype = {
     _doSearch: function(){
        this._searchTimeoutId = 0;
        let pattern = this.searchEntryText.get_text().replace(/^\s+/g, '').replace(/\s+$/g, '').toLowerCase();
-       global.log("====> "+pattern);
        
-       var results = new Array();
+       var appResults = new Array();
        
        for (directory in this.applicationsByCategory) {
           let apps = this.applicationsByCategory[directory];		
           for (var i=0; i<apps.length; i++) {
             let app = apps[i];	
-            if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)) results.push(app);
+            if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)) appResults.push(app);
           }
        }
        
-       this._displaySearchResults(results);
+       var placesResults = new Array();
+       
+       let bookmarks = Main.placesManager.getBookmarks();
+         for (let id = 0; id < bookmarks.length; id++) {  
+            if (bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1) placesResults.push(bookmarks[id]);
+         } 
+         
+         let devices = Main.placesManager.getMounts();      
+         for (let id = 0; id < devices.length; id++) {             
+             if (devices[id].name.toLowerCase().indexOf(pattern)!=-1) placesResults.push(devices[id]);                                       
+         }
+       
+       this._displaySearchResults(appResults, placesResults);
 
        return false;
     }
