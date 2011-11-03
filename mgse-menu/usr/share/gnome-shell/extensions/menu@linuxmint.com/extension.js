@@ -409,87 +409,57 @@ ApplicationsButton.prototype = {
         section.actor.add_actor(this.selectedAppBox);
     },
     
-     _select_category : function(dir, categoryButton) {	
-       this.resetSearch();
-		 let actors = this.applicationsBox.get_children();
-		 for (var i=0; i<actors.length; i++) {
-			let actor = actors[i];			
-			this.applicationsBox.remove_actor(actor);	
-		 }
-         
-         let actors = this.categoriesBox.get_children();
-
-         for (var i=0; i<actors.length; i++){
-             let actor = actors[i];      
-             if (actor==categoryButton.actor) actor.style_class = "category-button-selected";
-             else actor.style_class = "category-button";
-         }
-		  
-		 let apps = this.applicationsByCategory[dir.get_menu_id()];				 
-		 for (var i=0; i<apps.length; i++) {
-			let app = apps[i];			
-			let applicationButton = new ApplicationButton(app);			
-			this.applicationsBox.add_actor(applicationButton.actor);		
-         applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
-            this.selectedAppTitle.set_text(applicationButton.app.get_name());
-            if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
-            else this.selectedAppDescription.set_text("");
-         }));
-         applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
-            this.selectedAppTitle.set_text("");
-            this.selectedAppDescription.set_text("");
-         }));
-		 }
-	 },
-    
-    _displaySearchResults: function(appsResults, placesResults){
+    _clearApplicationsBox: function(selectedActor){
        let actors = this.applicationsBox.get_children();
 		 for (var i=0; i<actors.length; i++) {
 			let actor = actors[i];			
 			this.applicationsBox.remove_actor(actor);	
 		 }
-         
-         let actors = this.categoriesBox.get_children();
+       
+       let actors = this.categoriesBox.get_children();
 
          for (var i=0; i<actors.length; i++){
-             actors[i].style_class = "category-button";
+             let actor = actors[i];      
+             if (actor==selectedActor) actor.style_class = "category-button-selected";
+             else actor.style_class = "category-button";
          }
-         
-         for (var i=0; i<appsResults.length; i++) {
-            let app = appsResults[i];			
-            let applicationButton = new ApplicationButton(app);			
-            this.applicationsBox.add_actor(applicationButton.actor);		
-            applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
-               this.selectedAppTitle.set_text(applicationButton.app.get_name());
-               if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
-               else this.selectedAppDescription.set_text("");
-            }));
-            applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
-               this.selectedAppTitle.set_text("");
-               this.selectedAppDescription.set_text("");
-            }));
-          }
-         
-         for (var i=0; i<placesResults.length; i++) {
-            let place = placesResults[i];			
-            let button = new PlaceButton(place, place.name);                
-            this.applicationsBox.add_actor(button.actor);
+    },
+    
+     _select_category : function(dir, categoryButton) {	
+       this.resetSearch();
+       this._clearApplicationsBox(categoryButton.actor);
+       this._displayButtons(this._listApplications(dir.get_menu_id()));
+	 },
+    
+    _displayButtons: function(apps, places){
+         if (apps){
+            for (var i=0; i<apps.length; i++) {
+               let app = apps[i];			
+               let applicationButton = new ApplicationButton(app);			
+               this.applicationsBox.add_actor(applicationButton.actor);		
+               applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
+                  this.selectedAppTitle.set_text(applicationButton.app.get_name());
+                  if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
+                  else this.selectedAppDescription.set_text("");
+               }));
+               applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
+                  this.selectedAppTitle.set_text("");
+                  this.selectedAppDescription.set_text("");
+               }));
+            }
+         }
+
+         if (places){
+            for (var i=0; i<places.length; i++) {
+               let place = places[i];			
+               let button = new PlaceButton(place, place.name);                
+               this.applicationsBox.add_actor(button.actor);
+            }
          }
     },
      
      _select_places : function(button) {			 
-		 let actors = this.applicationsBox.get_children();
-		 for (var i=0; i<actors.length; i++) {
-			let actor = actors[i];			
-			this.applicationsBox.remove_actor(actor);	
-		 }
-         
-         let actors = this.categoriesBox.get_children();
-         for (var i=0; i<actors.length; i++){
-             let actor = actors[i];      
-             if (actor==button.actor) actor.style_class = "category-button-selected";
-             else actor.style_class = "category-button";
-         }
+		   this._clearApplicationsBox(button.actor);
          
          //let places = Main.placesManager.getDefaultPlaces();
          //for (let id = 0; id < places.length; id++) {             
@@ -497,17 +467,9 @@ ApplicationsButton.prototype = {
          //    this.applicationsBox.add_actor(button.actor);	                                        
          //} 
          
-         let bookmarks = Main.placesManager.getBookmarks();
-         for (let id = 0; id < bookmarks.length; id++) {             
-             let button = new PlaceButton(bookmarks[id], bookmarks[id].name);                
-             this.applicationsBox.add_actor(button.actor);	                                        
-         } 
-         
-         let devices = Main.placesManager.getMounts();      
-         for (let id = 0; id < devices.length; id++) {             
-             let button = new PlaceButton(devices[id], devices[id].name);                
-             this.applicationsBox.add_actor(button.actor);	                                        
-         }      
+         let bookmarks = this._listBookmarks();  
+         let devices = this._listDevices();  
+         this._displayButtons(null, bookmarks.concat(devices));
 	 },
      
      setBottomPosition: function(value){
@@ -561,33 +523,60 @@ ApplicationsButton.prototype = {
         this._searchTimeoutId = Mainloop.timeout_add(150, Lang.bind(this, this._doSearch));
     },
     
+    _listBookmarks: function(pattern){
+       let bookmarks = Main.placesManager.getBookmarks();
+       var res = new Array();
+       for (let id = 0; id < bookmarks.length; id++) {
+          if (!pattern || bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1) res.push(bookmarks[id]);
+       }
+       return res;
+    },
+    
+    _listDevices: function(pattern){
+       let devices = Main.placesManager.getMounts();
+       var res = new Array();
+       for (let id = 0; id < devices.length; id++) {
+          if (!pattern || devices[id].name.toLowerCase().indexOf(pattern)!=-1) res.push(devices[id]);
+       }
+       return res;
+    },
+    
+    _listApplications: function(category_menu_id, pattern){
+       var applist;
+       if (category_menu_id) applist = this.applicationsByCategory[category_menu_id];
+       else{
+          applist = new Array();
+          for (directory in this.applicationsByCategory) applist = applist.concat(this.applicationsByCategory[directory]);
+       }
+       
+       var res;
+       if (pattern){
+          res = new Array();
+          for (var i in applist){
+             let app = applist[i];
+             if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)) res.push(app);
+          }
+       }else res = applist;
+       
+       return res;
+    },
+    
     _doSearch: function(){
        this._searchTimeoutId = 0;
        let pattern = this.searchEntryText.get_text().replace(/^\s+/g, '').replace(/\s+$/g, '').toLowerCase();
        
-       var appResults = new Array();
-       
-       for (directory in this.applicationsByCategory) {
-          let apps = this.applicationsByCategory[directory];		
-          for (var i=0; i<apps.length; i++) {
-            let app = apps[i];	
-            if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)) appResults.push(app);
-          }
-       }
+       var appResults = this._listApplications(null, pattern);
        
        var placesResults = new Array();
        
-       let bookmarks = Main.placesManager.getBookmarks();
-         for (let id = 0; id < bookmarks.length; id++) {  
-            if (bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1) placesResults.push(bookmarks[id]);
-         } 
-         
-         let devices = Main.placesManager.getMounts();      
-         for (let id = 0; id < devices.length; id++) {             
-             if (devices[id].name.toLowerCase().indexOf(pattern)!=-1) placesResults.push(devices[id]);                                       
-         }
+       var bookmarks = this._listBookmarks(pattern);
+       for (var i in bookmarks) placesResults.push(bookmarks[i]);
        
-       this._displaySearchResults(appResults, placesResults);
+       var devices = this._listDevices(pattern);
+       for (var i in devices) placesResults.push(devices[i]);
+       
+       this._clearApplicationsBox();
+       this._displayButtons(appResults, placesResults);
 
        return false;
     }
