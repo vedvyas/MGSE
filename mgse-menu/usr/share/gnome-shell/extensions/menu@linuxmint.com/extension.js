@@ -266,7 +266,8 @@ ApplicationsButton.prototype = {
     },
     
     _onOpenStateToggled: function(menu, open) {
-       if (!open) this.resetSearch();
+       if (open) global.stage.set_key_focus(this.searchEntry);
+       else this.resetSearch();
     },
 
     reDisplay : function() {
@@ -520,8 +521,8 @@ ApplicationsButton.prototype = {
      
      resetSearch: function(){
         this.searchEntry.set_text("");
-        global.stage.set_key_focus(this.actor);
         this.searchActive = false;
+        global.stage.set_key_focus(this.searchEntry);
      },
      
      _onSearchTextChanged: function (se, prop) {
