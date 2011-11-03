@@ -261,11 +261,11 @@ ApplicationsButton.prototype = {
         appsys.connect('installed-changed', Lang.bind(this, this.reDisplay));
         AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this.reDisplay));
         
-        this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateChanged));
+        this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateToggled));
         
     },
     
-    _onOpenStateChanged: function(menu, open) {
+    _onOpenStateToggled: function(menu, open) {
        if (!open) this.resetSearch();
     },
 
