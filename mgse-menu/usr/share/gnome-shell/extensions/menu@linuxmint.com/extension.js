@@ -565,7 +565,7 @@ ApplicationsButton.prototype = {
           let apps = this.applicationsByCategory[directory];		
           for (var i=0; i<apps.length; i++) {
             let app = apps[i];	
-            if (app.get_name().toLowerCase().indexOf(pattern)!=-1) results.push(app);
+            if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)) results.push(app);
           }
        }
        
