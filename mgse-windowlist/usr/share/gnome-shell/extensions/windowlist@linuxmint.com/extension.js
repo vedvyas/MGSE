@@ -629,7 +629,7 @@ function enable() {
     if (!bottomPosition) {
         // Move Activities button to the right and change its label
         Main.panel._leftBox.remove_actor(activitiesButton.actor);
-        Main.panel._rightBox.insert_actor(activitiesButton.actor, _children.length);
+        Main.panel._rightBox.insert_actor(activitiesButton.actor, Main.panel._rightBox.get_children().length);
         activitiesButton._label.set_text("-");
                 
         /* Remove Application Menu */  
