@@ -389,7 +389,7 @@ ApplicationsButton.prototype = {
             this._select_places(this.placesButton);
         }));
         this.placesButton.actor.connect('enter-event', Lang.bind(this, function() {
-            this._select_places(this.placesButton);
+            if (!this.searchActive) this._select_places(this.placesButton);
         }));
         this.categoriesBox.add_actor(this.placesButton.actor);
         
@@ -459,6 +459,7 @@ ApplicationsButton.prototype = {
     },
      
      _select_places : function(button) {			 
+         this.resetSearch();
 		   this._clearApplicationsBox(button.actor);
          
          //let places = Main.placesManager.getDefaultPlaces();
