@@ -262,6 +262,7 @@ ApplicationsButton.prototype = {
                                          icon_type: St.IconType.SYMBOLIC });
         this._searchTimeoutId = 0;
         this._searchIconClickedId = 0;
+        this._applicationsButtons = new Array();
         
         this._display();
         appsys.connect('installed-changed', Lang.bind(this, this.reDisplay));
@@ -277,6 +278,7 @@ ApplicationsButton.prototype = {
     },
 
     reDisplay : function() {
+        this._applicationsButtons = new Array();
         this._clearAll();
         this._display();
     },
@@ -451,17 +453,20 @@ ApplicationsButton.prototype = {
          if (apps){
             for (var i=0; i<apps.length; i++) {
                let app = apps[i];			
-               let applicationButton = new ApplicationButton(app);			
-               this.applicationsBox.add_actor(applicationButton.actor);		
-               applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
-                  this.selectedAppTitle.set_text(applicationButton.app.get_name());
-                  if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
-                  else this.selectedAppDescription.set_text("");
-               }));
-               applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
-                  this.selectedAppTitle.set_text("");
-                  this.selectedAppDescription.set_text("");
-               }));
+               if (!this._applicationsButtons[app]){
+                  let applicationButton = new ApplicationButton(app);			
+                  applicationButton.actor.connect('enter-event', Lang.bind(this, function() {
+                     this.selectedAppTitle.set_text(applicationButton.app.get_name());
+                     if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
+                     else this.selectedAppDescription.set_text("");
+                  }));
+                  applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
+                     this.selectedAppTitle.set_text("");
+                     this.selectedAppDescription.set_text("");
+                  }));
+                  this._applicationsButtons[app] = applicationButton;
+               }
+               this.applicationsBox.add_actor(this._applicationsButtons[app].actor);
             }
          }
 
