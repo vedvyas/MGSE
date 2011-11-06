@@ -80,8 +80,9 @@ AppMenuButtonRightClickMenu.prototype = {
             this.metaWindow.minimize(global.get_current_time());
     },
 
-    _onMaximizeWindowActivate: function(actor, event){        
-        this.metaWindow.maximize(global.get_current_time());
+    _onMaximizeWindowActivate: function(actor, event){      
+        // 3 = 1 | 2 for both horizontally and vertically (didn't find where the META_MAXIMIZE_HORIZONTAL and META_MAXIMIZE_VERTICAL constants were defined for the JS wrappers)
+        this.metaWindow.maximize(3);
     },
 
     _onSourceKeyPress: function(actor, event) {
