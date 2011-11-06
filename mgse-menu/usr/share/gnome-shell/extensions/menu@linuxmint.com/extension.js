@@ -389,15 +389,17 @@ ApplicationsButton.prototype = {
             if (nextType == GMenu.TreeItemType.DIRECTORY) {
                 let dir = iter.get_directory();                            
                 this.applicationsByCategory[dir.get_menu_id()] = new Array();
-                this._loadCategory(dir);                
-                let categoryButton = new CategoryButton(dir);
-                categoryButton.actor.connect('clicked', Lang.bind(this, function() {
-					this._select_category(dir, categoryButton);
-				}));
-				categoryButton.actor.connect('enter-event', Lang.bind(this, function() {
-					if (!this.searchActive) this._select_category(dir, categoryButton);
-				}));
-                this.categoriesBox.add_actor(categoryButton.actor);
+                this._loadCategory(dir);          
+                if (this.applicationsByCategory[dir.get_menu_id()].length>0){
+                   let categoryButton = new CategoryButton(dir);
+                   categoryButton.actor.connect('clicked', Lang.bind(this, function() {
+                     this._select_category(dir, categoryButton);
+                  }));
+                  categoryButton.actor.connect('enter-event', Lang.bind(this, function() {
+                     if (!this.searchActive) this._select_category(dir, categoryButton);
+                  }));
+                   this.categoriesBox.add_actor(categoryButton.actor);
+                }
             }
         }
         
