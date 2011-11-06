@@ -95,12 +95,18 @@ function CategoryButton(app) {
 
 CategoryButton.prototype = {
     _init: function(category) {	
-		this.icon_name = category.get_icon().get_names().toString();
-        this.actor = new St.Button({ reactive: true, label: category.get_name(), style_class: 'category-button', x_align: St.Align.START  });        
+        var label;
+		  if (category){
+           this.icon_name = category.get_icon().get_names().toString();
+           label = category.get_name();
+        }else label = _("All Applications");
+        this.actor = new St.Button({ reactive: true, label: label, style_class: 'category-button', x_align: St.Align.START  });        
         this.buttonbox = new St.BoxLayout();
-        this.label = new St.Label({ text: category.get_name(), style_class: 'category-button-label' }); 
-        this.icon = new St.Icon({icon_name: this.icon_name, icon_size: CATEGORY_ICON_SIZE, icon_type: St.IconType.FULLCOLOR});             
-        this.buttonbox.add_actor(this.icon);
+        this.label = new St.Label({ text: label, style_class: 'category-button-label' }); 
+        if (category){
+           this.icon = new St.Icon({icon_name: this.icon_name, icon_size: CATEGORY_ICON_SIZE, icon_type: St.IconType.FULLCOLOR});             
+           this.buttonbox.add_actor(this.icon);
+        }
         this.buttonbox.add_actor(this.label);
         this.actor.set_child(this.buttonbox);
         //this.actor.set_tooltip_text(category.get_name());       
@@ -365,6 +371,15 @@ ApplicationsButton.prototype = {
 		this.applicationsByCategory = {};
         let tree = appsys.get_tree();
         let root = tree.get_root_directory();
+        
+        let categoryButton = new CategoryButton(null);
+             categoryButton.actor.connect('clicked', Lang.bind(this, function() {
+            this._select_category(null, categoryButton);
+         }));
+         categoryButton.actor.connect('enter-event', Lang.bind(this, function() {
+            if (!this.searchActive) this._select_category(null, categoryButton);
+         }));
+         this.categoriesBox.add_actor(categoryButton.actor);
 
         let iter = root.iter();
         let nextType;
@@ -428,7 +443,8 @@ ApplicationsButton.prototype = {
      _select_category : function(dir, categoryButton) {	
        this.resetSearch();
        this._clearApplicationsBox(categoryButton.actor);
-       this._displayButtons(this._listApplications(dir.get_menu_id()));
+       if (dir) this._displayButtons(this._listApplications(dir.get_menu_id()));
+       else this._displayButtons(this._listApplications(null));
 	 },
     
     _displayButtons: function(apps, places){
@@ -558,6 +574,10 @@ ApplicationsButton.prototype = {
              if (app.get_name().toLowerCase().indexOf(pattern)!=-1 || (app.get_description() && app.get_description().toLowerCase().indexOf(pattern)!=-1)) res.push(app);
           }
        }else res = applist;
+       
+       res.sort(function(a,b){
+          return a.get_name().toLowerCase() > b.get_name().toLowerCase();
+       });
        
        return res;
     },
