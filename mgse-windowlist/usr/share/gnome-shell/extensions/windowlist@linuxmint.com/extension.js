@@ -51,7 +51,10 @@ AppMenuButtonRightClickMenu.prototype = {
         else
             this.itemMinimizeWindow = new PopupMenu.PopupMenuItem('Minimize');
         this.itemMinimizeWindow.connect('activate', Lang.bind(this, this._onMinimizeWindowActivate));        
-        this.itemMaximizeWindow = new PopupMenu.PopupMenuItem('Maximize');
+        if (metaWindow.get_maximized())
+            this.itemMaximizeWindow = new PopupMenu.PopupMenuItem(_("Unmaximize"));
+        else
+            this.itemMaximizeWindow = new PopupMenu.PopupMenuItem(_('Maximize'));
         this.itemMaximizeWindow.connect('activate', Lang.bind(this, this._onMaximizeWindowActivate));        
         
         if (bottomPosition) {
@@ -82,7 +85,13 @@ AppMenuButtonRightClickMenu.prototype = {
 
     _onMaximizeWindowActivate: function(actor, event){      
         // 3 = 1 | 2 for both horizontally and vertically (didn't find where the META_MAXIMIZE_HORIZONTAL and META_MAXIMIZE_VERTICAL constants were defined for the JS wrappers)
-        this.metaWindow.maximize(3);
+        if (this.metaWindow.get_maximized()){
+            this.metaWindow.unmaximize(3);
+            this.itemMaximizeWindow.label.set_text(_("Maximize"));
+        }else{
+            this.metaWindow.maximize(3);
+            this.itemMaximizeWindow.label.set_text(_("Unmaximize"));
+        }
     },
 
     _onSourceKeyPress: function(actor, event) {
