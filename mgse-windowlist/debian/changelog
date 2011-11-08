@@ -1,3 +1,9 @@
+mgse-windowlist (1.0.3) lisa; urgency=low
+
+  * Bug fixes
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 08 Nov 2011 12:16:27 +0000
+
 mgse-windowlist (1.0.2) lisa; urgency=low
 
   * Changed compatibility to "3.2"

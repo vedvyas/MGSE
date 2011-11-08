@@ -1,3 +1,12 @@
+mgse-menu (1.0.4) lisa; urgency=low
+
+  * All applications
+  * Filtering
+  * UI improvements
+  * Bug fixes
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 08 Nov 2011 12:15:20 +0000
+
 mgse-menu (1.0.3) lisa; urgency=low
 
   * Aligned on the left
