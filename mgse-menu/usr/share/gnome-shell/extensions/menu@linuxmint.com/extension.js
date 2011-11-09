@@ -593,6 +593,13 @@ ApplicationsButton.prototype = {
        this._searchTimeoutId = 0;
        let pattern = this.searchEntryText.get_text().replace(/^\s+/g, '').replace(/\s+$/g, '').toLowerCase();
        
+       // _listApplications returns all the applications when the search
+       // string is zero length. This will happend if you type a space
+       // in the search entry.
+       if (pattern.length == 0) {
+           return false;
+       }
+
        var appResults = this._listApplications(null, pattern);
        
        var placesResults = new Array();
