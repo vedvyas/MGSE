@@ -1,3 +1,9 @@
+mgse-menu (1.0.5) lisa; urgency=low
+
+  * ahdiaz: Fixed behaviour with the search entry: A single space in the search entry causes the list of all the applications.
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 11 Nov 2011 11:59:25 +0000
+
 mgse-menu (1.0.4) lisa; urgency=low
 
   * All applications
