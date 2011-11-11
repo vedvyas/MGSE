@@ -82,7 +82,12 @@
     padding-bottom: 7px;    
 }
 
-.application-button:hover {
+.application-button:hover,
+.application-button-selected {
+    padding-top: 7px;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 7px;
     color: white;
 	 background-gradient-direction: vertical;
 	 background-gradient-start: rgba(255,255,255,0.2);
