@@ -100,13 +100,17 @@ CategoryButton.prototype = {
     _init: function(category) {	
         var label;
 		  if (category){
-           this.icon_name = category.get_icon().get_names().toString();
+           let icon = category.get_icon();
+           if (icon)
+               this.icon_name = icon.get_names().toString();
+           else
+               this.icon_name = "";
            label = category.get_name();
         }else label = _("All Applications");
         this.actor = new St.Button({ reactive: true, label: label, style_class: 'category-button', x_align: St.Align.START  });        
         this.buttonbox = new St.BoxLayout();
         this.label = new St.Label({ text: label, style_class: 'category-button-label' }); 
-        if (category){
+        if (category && this.icon_name){
            this.icon = new St.Icon({icon_name: this.icon_name, icon_size: CATEGORY_ICON_SIZE, icon_type: St.IconType.FULLCOLOR});             
            this.buttonbox.add_actor(this.icon);
         }
