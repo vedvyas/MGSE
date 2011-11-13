@@ -13,6 +13,9 @@ const AppFavorites = imports.ui.appFavorites;
 const Gtk = imports.gi.Gtk;
 const Gio = imports.gi.Gio;
 
+const Gettext = imports.gettext.domain('gnome-shell-extensions');
+const _ = Gettext.gettext;
+
 const ICON_SIZE = 16;
 const FAV_ICON_SIZE = 30;
 const CATEGORY_ICON_SIZE = 20;
