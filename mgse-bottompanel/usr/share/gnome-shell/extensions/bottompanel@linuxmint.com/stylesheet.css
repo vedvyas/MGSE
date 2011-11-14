@@ -56,6 +56,7 @@
 
 .window-list-box {
     spacing: 6px;
+    padding-left: 10px;
 }
 
 .window-list-item-box {

@@ -1,3 +1,9 @@
+mgse-bottompanel (1.0.1) lisa; urgency=low
+
+  * alquirel: 10px seperation between windows list and show desktop button
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 11 Nov 2011 12:00:29 +0000
+
 mgse-bottompanel (1.0.0) lisa; urgency=low
 
   * Initial release
