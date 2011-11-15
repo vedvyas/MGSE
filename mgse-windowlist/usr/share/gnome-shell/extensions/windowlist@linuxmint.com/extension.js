@@ -609,12 +609,10 @@ ShowDesktopButton.prototype = {
     }
 };
 
-let appMenu;
-let activitiesButton;
-let activitiesButtonLabel;
 let windowList;
 let button;
 let bottomPosition;
+let appMenu;
 
 function init(extensionMeta) {
     // Find out if the bottom panel extension is enabled    
@@ -626,26 +624,14 @@ function init(extensionMeta) {
     else {
         bottomPosition = false;
     }    
-    imports.gettext.bindtextdomain('gnome-shell-extensions', extensionMeta.localedir);
-    appMenu = Main.panel._appMenu;    
-    activitiesButton = Main.panel._activitiesButton;
-    activitiesButtonLabel = Main.panel._activitiesButton._label.get_text();
+    imports.gettext.bindtextdomain('gnome-shell-extensions', extensionMeta.localedir);        
     windowList = new WindowList();
     button = new ShowDesktopButton();
+    appMenu = Main.panel._appMenu;   
 }
 
 function enable() {	
-    
-    if (!bottomPosition) {
-        // Move Activities button to the right and change its label
-        Main.panel._leftBox.remove_actor(activitiesButton.actor);
-        Main.panel._rightBox.insert_actor(activitiesButton.actor, Main.panel._rightBox.get_children().length);
-        activitiesButton._label.set_text("-");
                 
-        /* Remove Application Menu */  
-        Main.panel._leftBox.remove_actor(appMenu.actor);          
-    }
-            
     // Create a show desktop button   
     Main.panel._leftBox.add(button.actor, { x_fill: true, y_fill: true });
     
@@ -662,23 +648,22 @@ function enable() {
         Main.panel._mintPanel.moveMe(button);
         Main.panel._mintPanel.moveMe(windowList);
     }
+    
+    if (!bottomPosition) {                        
+        /* Remove Application Menu */  
+        Main.panel._leftBox.remove_actor(appMenu.actor);          
+    }
 }
 
-function disable() {
-        
-    if (!bottomPosition) {
-        // Place back the Activities button
-        Main.panel._rightBox.remove_actor(activitiesButton.actor);
-        Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
-        activitiesButton._label.set_text(activitiesButtonLabel);
-    
-        // Place back the Application Menu
-        Main.panel._leftBox.add_actor(appMenu.actor);
-    }
-    
+function disable() {            
     // Remove the show desktop button   
     Main.panel._leftBox.remove_actor(button.actor);
     
     // Remove the window list
     Main.panel._leftBox.remove_actor(windowList.actor);
+    
+    if (!bottomPosition) {
+        // Place back the Application Menu
+        Main.panel._leftBox.insert_actor(appMenu.actor, 1);
+    }
 }

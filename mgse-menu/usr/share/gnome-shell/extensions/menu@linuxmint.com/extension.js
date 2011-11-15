@@ -627,6 +627,9 @@ ApplicationsButton.prototype = {
 let appsMenuButton;
 let mintMenuOrientation;
 let icon_path;
+let activitiesButton;
+let activitiesButtonLabel;
+let bottomPosition;
 
 function enable() {  
     appsMenuButton = new ApplicationsButton(); 
@@ -641,11 +644,25 @@ function enable() {
         Main.panel._mintPanel.moveMe(appsMenuButton);
         global.log("mintMenu found mintPanel");
     }
+    
+    if (!bottomPosition) {
+        // Move Activities button to the right and change its label
+        Main.panel._leftBox.remove_actor(activitiesButton.actor);
+        Main.panel._rightBox.insert_actor(activitiesButton.actor, Main.panel._rightBox.get_children().length);
+        activitiesButton._label.set_text("-");                    
+    }
 }
 
 function disable() {
     Main.panel._leftBox.remove_actor(appsMenuButton.actor);    
-    Main.panel._menus.removeMenu(appsMenuButton.menu);    
+    Main.panel._menus.removeMenu(appsMenuButton.menu);   
+    
+    if (!bottomPosition) {
+        // Place back the Activities button
+        Main.panel._rightBox.remove_actor(activitiesButton.actor);
+        Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
+        activitiesButton._label.set_text(activitiesButtonLabel);        
+    } 
 }
 
 function init(metadata) {
@@ -657,8 +674,13 @@ function init(metadata) {
     let enabled_extensions = settings.get_strv('enabled-extensions');
     if (enabled_extensions.indexOf("bottompanel@linuxmint.com") != -1) {
         mintMenuOrientation = St.Side.BOTTOM;
+        bottomPosition = true;
     }
     else {
         mintMenuOrientation = St.Side.TOP;
+        bottomPosition = false;
     }
+    
+    activitiesButton = Main.panel._activitiesButton;
+    activitiesButtonLabel = Main.panel._activitiesButton._label.get_text();    
 }
