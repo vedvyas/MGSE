@@ -1,5 +1,5 @@
 #bottomPanel {
-    	border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
 	border-top: 0px;
 	border-left: 0px;
 	border-right: 0px;
@@ -8,7 +8,7 @@
 	background-gradient-direction: vertical;
 	background-gradient-start: rgba(0,0,0,0.8);
 	background-gradient-end: rgba(0,0,0,0.6);
-	height: 24px;
+	height: 26px;
 	font-size: 8.5pt;
 	font-weight: normal;    
 }
@@ -16,13 +16,12 @@
 .message-button {
     min-width: 2.5em;
     font-weight: bold;
-    color: #ccc;
+    color: #555;
     transition-duration: 100;
 }
 
 .message-button:hover {
-    color: white;
-    text-shadow: black 0px 2px 2px;
+    color: #aaa;    
 }
 
 .bottom-panel {
@@ -34,49 +33,17 @@
 }
 
 .workspace-button {
-    min-width: 2.5em;
-    font-weight: bold;
-    color: #ccc;
+    min-width: 2.5em;   
+    color: #555;
     transition-duration: 100;
     border: 1px;
-    border-color: #ccc;
+    border-color: #a6a6a6;
     padding: 2px;
 }
 
 .workspace-button:outlined {
-    padding: 1px;
-    border: 2px solid white;
-    background: #222;
-}
-
-.workspace-button:hover {
-    color: white;
-    text-shadow: black 0px 2px 2px;
-}
-
-.window-list-box {
-    spacing: 6px;
-    padding-left: 10px;
-}
-
-.window-list-item-box {
-    spacing: 3px;
-    border-radius: 4px;
-    border-width: 1px;
-    border-color: #bbb;
-    color: #bbb;
-    padding: 0px 2px;
-}
-
-.window-list-item-box:focused {
-    color: white;
-    background: #282828;
-}
-
-.window-list-item-label {
-    font-weight: bold;
-    width: 15em;
-    min-width: 5px;
+    padding: 1px;    
+    background: #cccccc;
 }
 
 .workspace-dialog-label {
@@ -109,3 +76,4 @@
     padding-bottom: 15px;
     padding-top: 15px;
 }
+

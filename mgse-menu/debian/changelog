@@ -1,3 +1,9 @@
+mgse-menu (1.0.7) lisa; urgency=low
+
+  * Different style depending on position (top or bottom)
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 15 Nov 2011 18:47:09 +0000
+
 mgse-menu (1.0.6) lisa; urgency=low
 
   * Gettext definition

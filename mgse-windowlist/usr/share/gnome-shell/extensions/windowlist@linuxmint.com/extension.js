@@ -123,13 +123,23 @@ AppMenuButton.prototype = {
     
     _init: function(app, metaWindow, animation) {
 
-	this.actor = new St.Bin({ style_class: 'panel-button',
-                                  reactive: true,
-                                  can_focus: true,
-                                  x_fill: true,
-                                  y_fill: false,
-                                  track_hover: true });
-
+        if (bottomPosition) {        
+            this.actor = new St.Bin({ style_class: 'window-list-item-box-bottom',
+                                      reactive: true,
+                                      can_focus: true,
+                                      x_fill: true,
+                                      y_fill: false,
+                                      track_hover: true });
+        }
+        else {
+            this.actor = new St.Bin({ style_class: 'window-list-item-box',
+                                      reactive: true,
+                                      can_focus: true,
+                                      x_fill: true,
+                                      y_fill: false,
+                                      track_hover: true });
+        }
+        
         this.actor._delegate = this;
         this.actor.connect('button-release-event', Lang.bind(this, this._onButtonRelease));
 
@@ -147,14 +157,15 @@ AppMenuButton.prototype = {
 								Lang.bind(this, this._getContentPreferredHeight));
         this._container.connect('allocate', Lang.bind(this, this._contentAllocate));
 
+        
         this._iconBox = new Shell.Slicer({ name: 'appMenuIcon' });
         this._iconBox.connect('style-changed',
                               Lang.bind(this, this._onIconBoxStyleChanged));
         this._iconBox.connect('notify::allocation',
                               Lang.bind(this, this._updateIconBoxClip));
         this._container.add_actor(this._iconBox);
-        this._label = new Panel.TextShadower();
-        this._container.add_actor(this._label.actor);
+        this._label = new St.Label();
+        this._container.add_actor(this._label);
 
         this._iconBottomClip = 0;
 
@@ -170,17 +181,16 @@ AppMenuButton.prototype = {
         this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
         
         this._updateCaptionId = this.metaWindow.connect('notify::title', Lang.bind(this, function () {
-            this._label.setText(this.metaWindow.get_title());
+            this._label.set_text(this.metaWindow.get_title());
         }));
                 
         this._spinner = new Panel.AnimatedIcon('process-working.svg', PANEL_ICON_SIZE);
         this._container.add_actor(this._spinner.actor);
         this._spinner.actor.lower_bottom();
 
-		// let icon = this.app.create_icon_texture(1.5 * PANEL_ICON_SIZE);
-		let icon = this.app.get_faded_icon(1.15 * PANEL_ICON_SIZE);		
-        // this._label.setText(this.app.get_name());
-        this._label.setText(this.metaWindow.get_title());
+		let icon = this.app.create_icon_texture(16);
+		//let icon = this.app.get_faded_icon(1.15 * PANEL_ICON_SIZE);		        
+        this._label.set_text(this.metaWindow.get_title());
         this._iconBox.set_child(icon);
         
         if(animation){
@@ -203,12 +213,12 @@ AppMenuButton.prototype = {
         //let focusedApp = tracker.focus_app;    
         if (this.metaWindow.has_focus()) {
             this.actor.add_style_pseudo_class('focus');
-	    let icon = this.app.get_faded_icon(1.15 * PANEL_ICON_SIZE);
+	    let icon = this.app.create_icon_texture(16);
 	    this._iconBox.set_child(icon);
         }
         else {
             this.actor.remove_style_pseudo_class('focus');
-	    let icon = this.app.get_faded_icon(1.15 * PANEL_ICON_SIZE);
+	    let icon = this.app.create_icon_texture(16);
 	    this._iconBox.set_child(icon);
         }
     },
@@ -262,9 +272,9 @@ AppMenuButton.prototype = {
 
     _updateIconBoxClip: function() {
         let allocation = this._iconBox.allocation;
-        if (this._iconBottomClip > 0)
-            this._iconBox.set_clip(0, 0,
-                                   allocation.x2 - allocation.x1,
+       if (this._iconBottomClip > 0)
+           this._iconBox.set_clip(0, 0,
+                                 allocation.x2 - allocation.x1,
                                    allocation.y2 - allocation.y1 - this._iconBottomClip);
         else
             this._iconBox.remove_clip();
@@ -291,7 +301,7 @@ AppMenuButton.prototype = {
         let [minSize, naturalSize] = this._iconBox.get_preferred_width(forHeight);
         alloc.min_size = minSize;
         alloc.natural_size = naturalSize;
-        [minSize, naturalSize] = this._label.actor.get_preferred_width(forHeight);
+        [minSize, naturalSize] = this._label.get_preferred_width(forHeight);
 //        alloc.min_size = alloc.min_size + Math.max(0, minSize - Math.floor(alloc.min_size / 2));
         alloc.min_size = alloc.min_size + Math.max(0, minSize);
 //        alloc.natural_size = alloc.natural_size + Math.max(0, naturalSize - Math.floor(alloc.natural_size / 2));
@@ -302,7 +312,7 @@ AppMenuButton.prototype = {
         let [minSize, naturalSize] = this._iconBox.get_preferred_height(forWidth);
         alloc.min_size = minSize;
         alloc.natural_size = naturalSize;
-        [minSize, naturalSize] = this._label.actor.get_preferred_height(forWidth);
+        [minSize, naturalSize] = this._label.get_preferred_height(forWidth);
         if (minSize > alloc.min_size)
             alloc.min_size = minSize;
         if (naturalSize > alloc.natural_size)
@@ -322,7 +332,7 @@ AppMenuButton.prototype = {
         childBox.y1 = yPadding;
         childBox.y2 = childBox.y1 + Math.min(naturalHeight, allocHeight);
         if (direction == St.TextDirection.LTR) {
-            childBox.x1 = 0;
+            childBox.x1 = 3;
             childBox.x2 = childBox.x1 + Math.min(naturalWidth, allocWidth);
         } else {
             childBox.x1 = Math.max(0, allocWidth - naturalWidth);
@@ -330,25 +340,25 @@ AppMenuButton.prototype = {
         }
         this._iconBox.allocate(childBox, flags);
 
-        let iconWidth = childBox.x2 - childBox.x1;
+        let iconWidth = 16;
 
-        [minWidth, minHeight, naturalWidth, naturalHeight] = this._label.actor.get_preferred_size();
+        [minWidth, minHeight, naturalWidth, naturalHeight] = this._label.get_preferred_size();
 
         yPadding = Math.floor(Math.max(0, allocHeight - naturalHeight) / 2);
         childBox.y1 = yPadding;
         childBox.y2 = childBox.y1 + Math.min(naturalHeight, allocHeight);
 
         if (direction == St.TextDirection.LTR) {
-            childBox.x1 = Math.floor(iconWidth / 2 + 3);
+            childBox.x1 = Math.floor(iconWidth + 5);
             childBox.x2 = Math.min(childBox.x1 + naturalWidth, allocWidth);
         } else {
-            childBox.x2 = allocWidth - Math.floor(iconWidth / 2);
+            childBox.x2 = allocWidth - Math.floor(iconWidth + 3);
             childBox.x1 = Math.max(0, childBox.x2 - naturalWidth);
         }
-        this._label.actor.allocate(childBox, flags);
+        this._label.allocate(childBox, flags);
 
         if (direction == St.TextDirection.LTR) {
-            childBox.x1 = Math.floor(iconWidth / 2) + this._label.actor.width;
+            childBox.x1 = Math.floor(iconWidth / 2) + this._label.width;
             childBox.x2 = childBox.x1 + this._spinner.actor.width;
             childBox.y1 = box.y1;
             childBox.y2 = box.y2 - 1;
@@ -430,7 +440,7 @@ WindowList.prototype = {
     _onMinimize: function(shellwm, actor) {
         for ( let i=0; i<this._windows.length; ++i ) {
             if ( this._windows[i].metaWindow == actor.get_meta_window() ) {                
-                this._windows[i]._label.setText("["+ actor.get_meta_window().get_title() +"]");     
+                this._windows[i]._label.set_text("["+ actor.get_meta_window().get_title() +"]");     
                 this._windows[i].rightClickMenu.itemMinimizeWindow.label.set_text("Restore");           
                 return;
             }
@@ -440,7 +450,7 @@ WindowList.prototype = {
     _onMap: function(shellwm, actor) {
         for ( let i=0; i<this._windows.length; ++i ) {
             if ( this._windows[i].metaWindow == actor.get_meta_window() ) {                
-                this._windows[i]._label.setText(actor.get_meta_window().get_title());                
+                this._windows[i]._label.set_text(actor.get_meta_window().get_title());                
                 this._windows[i].rightClickMenu.itemMinimizeWindow.label.set_text("Minimize");
                 return;
             }

@@ -1,3 +1,11 @@
+mgse-windowlist (1.0.5) lisa; urgency=low
+
+  * Changed fader icons to normal icons
+  * different style for top and bottom panels
+  * Introduced style improvements to make the window list look like Gnome 2
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 15 Nov 2011 18:48:13 +0000
+
 mgse-windowlist (1.0.4) lisa; urgency=low
 
   * window list can now be enabled/disabled when the bottom panel is enabled

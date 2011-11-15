@@ -252,12 +252,20 @@ ApplicationsButton.prototype = {
         box.add(this._iconBox, { y_align: St.Align.MIDDLE, y_fill: false });        
         
         let icon_file = icon_path + "menu.png";
+        if (bottomPosition) {
+            icon_file = icon_path + "menu-bottom.png";
+        }        
         let file = Gio.file_new_for_path(icon_file);
         let icon_uri = file.get_uri(); 
         this._icon = St.TextureCache.get_default().load_uri_sync(1, icon_uri, 22, 22);        
         //this._icon = new St.Icon({ icon_name: 'start-here', style_class: 'popup-menu-icon' });
-        this._iconBox.child = this._icon;                         
-        this._label = new St.Label();
+        this._iconBox.child = this._icon;
+        if (bottomPosition) {
+            this._label = new St.Label({ track_hover: true, style_class: 'application-menu-button-label-bottom'});
+        }
+        else {
+            this._label = new St.Label({ track_hover: true, style_class: 'application-menu-button-label'});
+        }                                 
         box.add(this._label, { y_align: St.Align.MIDDLE, y_fill: false });
         this._label.set_text(_(" Menu"));        
         
