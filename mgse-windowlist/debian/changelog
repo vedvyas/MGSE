@@ -1,3 +1,11 @@
+mgse-windowlist (1.0.4) lisa; urgency=low
+
+  * window list can now be enabled/disabled when the bottom panel is enabled
+  * window list now hides/shows appmenu when enabled/disabled
+  * window list doesn't interfere with activities button anymore
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 15 Nov 2011 13:35:07 +0000
+
 mgse-windowlist (1.0.3) lisa; urgency=low
 
   * Bug fixes

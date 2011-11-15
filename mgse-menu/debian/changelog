@@ -1,3 +1,12 @@
+mgse-menu (1.0.6) lisa; urgency=low
+
+  * Gettext definition
+  * Fix for bug #889546
+  * Menu shows/hides activities button when disabled/enabled
+  * Menu can now be enabled/disabled when the bottom panel is enabled
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 15 Nov 2011 13:32:33 +0000
+
 mgse-menu (1.0.5) lisa; urgency=low
 
   * ahdiaz: Fixed behaviour with the search entry: A single space in the search entry causes the list of all the applications.
