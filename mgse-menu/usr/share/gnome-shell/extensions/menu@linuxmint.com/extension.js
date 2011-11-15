@@ -631,7 +631,20 @@ let activitiesButton;
 let activitiesButtonLabel;
 let bottomPosition;
 
-function enable() {  
+function enable() {
+    
+    // Find out if the bottom panel extension is enabled    
+    let settings = new Gio.Settings({ schema: 'org.gnome.shell' });
+    let enabled_extensions = settings.get_strv('enabled-extensions');
+    if (enabled_extensions.indexOf("bottompanel@linuxmint.com") != -1) {
+        mintMenuOrientation = St.Side.BOTTOM;
+        bottomPosition = true;
+    }
+    else {
+        mintMenuOrientation = St.Side.TOP;
+        bottomPosition = false;
+    }
+        
     appsMenuButton = new ApplicationsButton(); 
     Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);    
     Main.panel._menus.addMenu(appsMenuButton.menu);
@@ -640,8 +653,8 @@ function enable() {
     Main.panel._mintMenu = appsMenuButton;
     
     /* Look for mintPanel */
-    if (Main.panel._mintPanel != null) {
-        Main.panel._mintPanel.moveMe(appsMenuButton);
+    if (Main.panel._mintPanel != null) {        
+        Main.panel._mintPanel.moveMe(appsMenuButton);        
         global.log("mintMenu found mintPanel");
     }
     
@@ -663,24 +676,20 @@ function disable() {
         Main.panel._leftBox.insert_actor(activitiesButton.actor, 0);
         activitiesButton._label.set_text(activitiesButtonLabel);        
     } 
+    if (Main.panel._mintPanel != null) {
+        try {
+            Main.panel._mintPanel.leftBox.remove_actor(appsMenuButton.actor);                  
+        }
+        catch(err) {
+            // Best effort, user could have disabled/enabled the bottom panel, so we don't really know where to remove ourselves from.
+        }
+    }
 }
 
 function init(metadata) {
     
     icon_path = metadata.path + '/icons/';
-    
-    // Find out if the bottom panel extension is enabled    
-    let settings = new Gio.Settings({ schema: 'org.gnome.shell' });
-    let enabled_extensions = settings.get_strv('enabled-extensions');
-    if (enabled_extensions.indexOf("bottompanel@linuxmint.com") != -1) {
-        mintMenuOrientation = St.Side.BOTTOM;
-        bottomPosition = true;
-    }
-    else {
-        mintMenuOrientation = St.Side.TOP;
-        bottomPosition = false;
-    }
-    
+            
     activitiesButton = Main.panel._activitiesButton;
     activitiesButtonLabel = Main.panel._activitiesButton._label.get_text();    
 }

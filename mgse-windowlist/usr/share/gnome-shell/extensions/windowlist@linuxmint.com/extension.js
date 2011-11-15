@@ -666,4 +666,13 @@ function disable() {
         // Place back the Application Menu
         Main.panel._leftBox.insert_actor(appMenu.actor, 1);
     }
+    if (Main.panel._mintPanel != null) {
+        try {
+            Main.panel._mintPanel.leftBox.remove_actor(button.actor); 
+            Main.panel._mintPanel.leftBox.remove_actor(windowList.actor);                  
+        }
+        catch(err) {
+            // Best effort, user could have disabled/enabled the bottom panel, so we don't really know where to remove ourselves from.
+        }
+    }
 }
