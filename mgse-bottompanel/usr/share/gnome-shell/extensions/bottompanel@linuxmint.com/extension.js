@@ -5,7 +5,7 @@ const Meta = imports.gi.Meta;
 const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const Main = imports.ui.main;
-
+const WorkspaceSwitcherPopup = imports.ui.workspaceSwitcherPopup;
 
 const Gettext = imports.gettext.domain('gnome-shell-extensions');
 const _ = Gettext.gettext;
@@ -185,24 +185,24 @@ function init(extensionMeta) {
 
     origShowWorkspaceSwitcher =
         WindowManager.WindowManager.prototype._showWorkspaceSwitcher;
-
-    myShowWorkspaceSwitcher = function(shellwm, binding, window, backwards) {
+    
+    myShowWorkspaceSwitcher = function(shellwm, binding, mask, window, backwards) {
         if (global.screen.n_workspaces == 1)
             return;
 
-        if (this._workspaceSwitcherPopup == null)
-            this._workspaceSwitcherPopup = new DummyWorkspaceSwitcherPopup();
+        //if (this._workspaceSwitcherPopup == null)
+        //    this._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
 
-        if (binding == 'switch_to_workspace_left')
-            this.actionMoveWorkspaceLeft();
-        else if (binding == 'switch_to_workspace_right')
-            this.actionMoveWorkspaceRight();
-        // up/down would effectively act as synonyms for left/right if we enabled them;
+        if (binding == 'switch_to_workspace_up')
+            this.actionMoveWorkspaceUp();
+        else if (binding == 'switch_to_workspace_down')
+            this.actionMoveWorkspaceDown();
+        // left/right would effectively act as synonyms for up/down if we enabled them;
         // but that could be considered confusing.
-        // else if (binding == 'switch_to_workspace_up')
-        //     this.actionMoveWorkspaceUp();
-        // else if (binding == 'switch_to_workspace_down')
-        //     this.actionMoveWorkspaceDown();
+        else if (binding == 'switch_to_workspace_left')
+           this.actionMoveWorkspaceLeft();
+        else if (binding == 'switch_to_workspace_right')
+           this.actionMoveWorkspaceRight();
     };
 
     WindowManager.WindowManager.prototype._reset = function() {

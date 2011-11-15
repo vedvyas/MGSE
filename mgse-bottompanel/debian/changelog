@@ -1,3 +1,9 @@
+mgse-bottompanel (1.0.2) lisa; urgency=low
+
+  * Added keyboard shortcuts to change workspace
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 15 Nov 2011 14:55:45 +0000
+
 mgse-bottompanel (1.0.1) lisa; urgency=low
 
   * alquirel: 10px seperation between windows list and show desktop button
