@@ -142,7 +142,7 @@ function FavoritesButton(app) {
 
 FavoritesButton.prototype = {
     _init: function(app) {
-        this.actor = new St.Button({ reactive: true, style_class: 'favorites-button' });
+        this.actor = new St.Button({ reactive: true, style_class: 'applications-menu-favorites-button' });
         this.actor.set_child(app.create_icon_texture(FAV_ICON_SIZE));
         //this.actor.set_tooltip_text(app.get_name()); #Doesn't appear in the right place
         this._app = app;
@@ -169,7 +169,7 @@ MintButton.prototype = {
         this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
         this.actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));
         this.menu = new PopupMenu.PopupMenu(this.actor, menuAlignment, mintMenuOrientation);
-        this.menu.actor.add_style_class_name('panel-menu');
+        this.menu.actor.add_style_class_name('application-menu-background');
         this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateChanged));
         this.menu.actor.connect('key-press-event', Lang.bind(this, this._onMenuKeyPress));
         Main.uiGroup.add_actor(this.menu.actor);
@@ -321,9 +321,9 @@ ApplicationsButton.prototype = {
                
     _display : function() {
         let section = new PopupMenu.PopupMenuSection();        
-        this.menu.addMenuItem(section);            
+        this.menu.addMenuItem(section);           
         let favoritesTitle = new St.Label({ track_hover: true, style_class: 'favorites-title', text: "Favorites" });
-        this.favoritesBox = new St.BoxLayout({ style_class: 'favorites-box', vertical: true });         
+        this.favoritesBox = new St.BoxLayout({ style_class: 'applications-menu-favorites-box', vertical: true });         
         
         let rightPane = new St.BoxLayout({ vertical: true });
         
