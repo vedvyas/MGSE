@@ -308,8 +308,12 @@ ApplicationsButton.prototype = {
         let children = this._activeContainer.get_children();
 
         if (this._selectedItemIndex === null && symbol == Clutter.KEY_Up) {
+            this._activeContainer = this.applicationsBox;
+            children = this._activeContainer.get_children();
             this._selectedItemIndex = children.length;
         } else if (this._selectedItemIndex === null && symbol == Clutter.KEY_Down) {
+            this._activeContainer = this.applicationsBox;
+            children = this._activeContainer.get_children();
             this._selectedItemIndex = -1;
         }
 
@@ -641,6 +645,11 @@ ApplicationsButton.prototype = {
      },
      
      _onSearchTextChanged: function (se, prop) {
+        this._clearSelections(this.categoriesBox);
+        this._clearSelections(this.applicationsBox);
+        this._selectedItemIndex = null;
+        this._previousSelectedItemIndex = null;
+        this._activeContainer = null;
         this.searchActive = this.searchEntry.get_text() != '';
         if (this.searchActive) {
             this.searchEntry.set_secondary_icon(this._searchActiveIcon);
