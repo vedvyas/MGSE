@@ -1,3 +1,10 @@
+mgse-menu (1.1.0) lisa; urgency=low
+
+  * Better keyboard navigation
+  * Fixes in default stylesheet
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 18 Nov 2011 12:07:36 +0000
+
 mgse-menu (1.0.9) lisa; urgency=low
 
   * Keyboard navigation added
