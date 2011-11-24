@@ -601,7 +601,7 @@ ApplicationsButton.prototype = {
                let button = new PlaceButton(place, place.name);
                this._addEnterEvent(button, Lang.bind(this, function() {
                    this._clearSelections(this.applicationsBox);
-                   button.actor.style_class = "application-button-selected";
+                   button.actor.style_class = "category-button-selected";
                }));
                this.applicationsBox.add_actor(button.actor);
             }

@@ -1,3 +1,9 @@
+mgse-menu (1.1.1) lisa; urgency=low
+
+  * Fixed style for places button
+
+ -- Clement Lefebvre <clem@gateway>  Thu, 24 Nov 2011 13:35:21 +0000
+
 mgse-menu (1.1.0) lisa; urgency=low
 
   * Better keyboard navigation
