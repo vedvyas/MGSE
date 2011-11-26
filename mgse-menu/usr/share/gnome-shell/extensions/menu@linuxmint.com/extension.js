@@ -449,6 +449,17 @@ ApplicationsButton.prototype = {
         rightPane.add_actor(this.categoriesApplicationsBox);
         this.categoriesBox = new St.BoxLayout({ style_class: 'categories-box', vertical: true }); 
         this.applicationsScrollBox = new St.ScrollView({ x_fill: true, y_fill: false, y_align: St.Align.START, style_class: 'vfade applications-scrollbox' });
+        
+        let vscroll = this.applicationsScrollBox.get_vscroll_bar();
+        vscroll.connect('scroll-start',
+                        Lang.bind(this, function() {
+                                      this.menu.passEvents = true;
+                                  }));
+        vscroll.connect('scroll-stop',
+                        Lang.bind(this, function() {
+                                      this.menu.passEvents = false;
+                                  }));
+        
         this.applicationsBox = new St.BoxLayout({ style_class: 'applications-box', vertical:true });
         this.applicationsScrollBox.add_actor(this.applicationsBox)
         this.applicationsScrollBox.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC);
