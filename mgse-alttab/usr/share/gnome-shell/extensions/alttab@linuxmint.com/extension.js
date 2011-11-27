@@ -71,7 +71,7 @@ AltTabPopupW.prototype = {
 
     show : function(backward, switch_group, mask) {
     let appSys = Shell.AppSystem.get_default();
-    let apps = appSys.get_all ();
+    let apps = appSys.get_running ();
 
         if (!apps.length)
             return false;
@@ -383,7 +383,7 @@ AltTabPopup2.prototype = {
 	let normal_windows= [];
 	let appIcons = [];
 	let appSys = Shell.AppSystem.get_default();
-	let apps = appSys.get_all();
+	let apps = appSys.get_running();
 
 	for (let w = windows.length-1; w >= 0; w--) {
 	    let win = windows[w].get_meta_window();
@@ -542,7 +542,7 @@ WindowList.prototype = {
 	    let win=windows[w];
 
 	    let appSys = Shell.AppSystem.get_default();
-	    let apps = appSys.get_all();
+	    let apps = appSys.get_running();
 	    let ap1 = null;
 	    for (let i = 0; i < apps.length; i++) {
 	        let app_wins = apps[i].get_windows();
