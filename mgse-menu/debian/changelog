@@ -1,3 +1,9 @@
+mgse-menu (1.1.2) lisa; urgency=low
+
+  * Fixed scrollbar not draggable
+
+ -- Clement Lefebvre <root@linuxmint.com>  Sun, 27 Nov 2011 10:01:05 +0000
+
 mgse-menu (1.1.1) lisa; urgency=low
 
   * Fixed style for places button
