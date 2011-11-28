@@ -421,7 +421,16 @@ ApplicationsButton.prototype = {
                 this._loadCategory(iter.get_directory());
             }
         }
-    },    
+    },   
+    
+    _scrollToButton: function(button) {
+        var current_scroll_value = this.applicationsScrollBox.get_vscroll_bar().get_adjustment().get_value();
+        var box_height = this.applicationsScrollBox.get_allocation_box().y2-this.applicationsScrollBox.get_allocation_box().y1;
+        var new_scroll_value = current_scroll_value;
+        if (current_scroll_value > button.actor.get_allocation_box().y1-10) new_scroll_value = button.actor.get_allocation_box().y1-10;
+        if (box_height+current_scroll_value < button.actor.get_allocation_box().y2+10) new_scroll_value = button.actor.get_allocation_box().y2-box_height+10;
+        if (new_scroll_value!=current_scroll_value) this.applicationsScrollBox.get_vscroll_bar().get_adjustment().set_value(new_scroll_value);
+    }, 
                
     _display : function() {
         this._activeContainer = null;
@@ -599,6 +608,7 @@ ApplicationsButton.prototype = {
                       else this.selectedAppDescription.set_text("");
                       this._clearSelections(this.applicationsBox);
                       applicationButton.actor.style_class = "category-button-selected";
+                      this._scrollToButton(applicationButton);
                   }));
                   this._applicationsButtons[app] = applicationButton;
                }
@@ -613,6 +623,7 @@ ApplicationsButton.prototype = {
                this._addEnterEvent(button, Lang.bind(this, function() {
                    this._clearSelections(this.applicationsBox);
                    button.actor.style_class = "category-button-selected";
+                   this._scrollToButton(button);
                }));
                this.applicationsBox.add_actor(button.actor);
             }
