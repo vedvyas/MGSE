@@ -106,7 +106,7 @@ CategoryButton.prototype = {
         var label;
 		  if (category){
            let icon = category.get_icon();
-           if (icon)
+           if (icon && icon.get_names)
                this.icon_name = icon.get_names().toString();
            else
                this.icon_name = "";
