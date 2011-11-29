@@ -62,6 +62,22 @@ Native:\n\
     native switches the Alternate Tab extension off. \n\
 ");
 
+function get_running_apps(){
+    let metaWorkspace = global.screen.get_active_workspace();
+    let windows = metaWorkspace.list_windows();
+    let tracker = Shell.WindowTracker.get_default();
+    
+    var apps = new Array();
+    for ( let i = 0; i < windows.length; ++i ) {
+        let metaWindow = windows[i];
+        if ( metaWindow && tracker.is_window_interesting(metaWindow) ) {
+            let app = tracker.get_window_app(windows[i]);
+            if (apps.indexOf(app)==-1) apps.push(app);
+        }
+    }
+    return apps;
+}
+
 function AltTabPopupW() {
     this._init();
 }
@@ -70,8 +86,7 @@ AltTabPopupW.prototype = {
     __proto__ : AltTab.AltTabPopup.prototype,
 
     show : function(backward, switch_group, mask) {
-    let appSys = Shell.AppSystem.get_default();
-    let apps = appSys.get_running ();
+    let apps = get_running_apps ();
 
         if (!apps.length)
             return false;
@@ -382,8 +397,7 @@ AltTabPopup2.prototype = {
 	let list = '';
 	let normal_windows= [];
 	let appIcons = [];
-	let appSys = Shell.AppSystem.get_default();
-	let apps = appSys.get_running();
+	let apps = get_running_apps();
 
 	for (let w = windows.length-1; w >= 0; w--) {
 	    let win = windows[w].get_meta_window();
@@ -541,8 +555,7 @@ WindowList.prototype = {
 
 	    let win=windows[w];
 
-	    let appSys = Shell.AppSystem.get_default();
-	    let apps = appSys.get_running();
+	    let apps = get_running_apps();
 	    let ap1 = null;
 	    for (let i = 0; i < apps.length; i++) {
 	        let app_wins = apps[i].get_windows();
