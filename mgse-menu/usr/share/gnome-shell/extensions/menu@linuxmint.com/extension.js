@@ -302,19 +302,28 @@ ApplicationsButton.prototype = {
     _onMenuKeyPress: function(actor, event) {
 
         let symbol = event.get_key_symbol();
-        if (this._activeContainer === null) {
-            this._activeContainer = this.categoriesBox;
-        }
-        let children = this._activeContainer.get_children();
 
-        if (this._selectedItemIndex === null && symbol == Clutter.KEY_Up) {
+        if (this._activeContainer === null && symbol == Clutter.KEY_Up) {
             this._activeContainer = this.applicationsBox;
             children = this._activeContainer.get_children();
             this._selectedItemIndex = children.length;
-        } else if (this._selectedItemIndex === null && symbol == Clutter.KEY_Down) {
+        } else if (this._activeContainer === null && symbol == Clutter.KEY_Down) {
             this._activeContainer = this.applicationsBox;
             children = this._activeContainer.get_children();
             this._selectedItemIndex = -1;
+        }else if (this._activeContainer === null) {
+            this._activeContainer = this.categoriesBox;
+            this._selectedItemIndex = -1;
+            this._previousSelectedItemIndex = -1;
+        }
+        
+        let children = this._activeContainer.get_children();
+        
+        if (children.length==0){
+            this._activeContainer = this.categoriesBox;
+            this._selectedItemIndex = -1;
+            this._previousSelectedItemIndex = -1;
+            children = this._activeContainer.get_children();
         }
 
         let index = this._selectedItemIndex;
@@ -347,6 +356,8 @@ ApplicationsButton.prototype = {
         if (index == this._selectedItemIndex) {
             return true;
         }
+        
+        if (index>=children.length) index = children.length-1;
 
         this._selectedItemIndex = index;
         let item_actor = children[this._selectedItemIndex];
@@ -669,9 +680,6 @@ ApplicationsButton.prototype = {
      _onSearchTextChanged: function (se, prop) {
         this._clearSelections(this.categoriesBox);
         this._clearSelections(this.applicationsBox);
-        this._selectedItemIndex = null;
-        this._previousSelectedItemIndex = null;
-        this._activeContainer = null;
         this.searchActive = this.searchEntry.get_text() != '';
         if (this.searchActive) {
             this.searchEntry.set_secondary_icon(this._searchActiveIcon);
