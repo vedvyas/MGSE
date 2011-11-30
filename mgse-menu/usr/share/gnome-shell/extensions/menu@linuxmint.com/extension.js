@@ -759,9 +759,9 @@ this._clearApplicationsBox(button.actor);
        if (pattern==this._previousSearchPattern) return false;
        this._previousSearchPattern = pattern;
        
-       this._activeContainer = this.applicationsBox;
-       this._selectedItemIndex = -1;
-       this._previousSelectedItemIndex = -1;
+       this._activeContainer = null;
+       this._selectedItemIndex = null;
+       this._previousSelectedItemIndex = null;
        
        // _listApplications returns all the applications when the search
        // string is zero length. This will happend if you type a space
