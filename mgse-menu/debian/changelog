@@ -1,3 +1,10 @@
+mgse-menu (1.1.4) lisa; urgency=low
+
+  * Corrected bug with keyboard navigation
+  * Improved performance
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 30 Nov 2011 14:30:15 +0000
+
 mgse-menu (1.1.3) lisa; urgency=low
 
   * Fixed scrolling for keyboard navigation
