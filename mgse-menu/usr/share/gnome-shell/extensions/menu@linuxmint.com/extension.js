@@ -533,7 +533,7 @@ this.applicationsByCategory = {};
             this._select_category(null, categoryButton);
          }));
          this._addEnterEvent(categoryButton, Lang.bind(this, function() {
-             if (!this.searchActive) this._select_category(null, categoryButton);
+             this._select_category(null, categoryButton);
          }));
          this.categoriesBox.add_actor(categoryButton.actor);
 
@@ -550,7 +550,7 @@ this.applicationsByCategory = {};
                      this._select_category(dir, categoryButton);
                   }));
                   this._addEnterEvent(categoryButton, Lang.bind(this, function() {
-                      if (!this.searchActive) this._select_category(dir, categoryButton);
+                      this._select_category(dir, categoryButton);
                   }));
                    this.categoriesBox.add_actor(categoryButton.actor);
                 }
@@ -562,7 +562,7 @@ this.applicationsByCategory = {};
             this._select_places(this.placesButton);
         }));
         this._addEnterEvent(this.placesButton, Lang.bind(this, function() {
-            if (!this.searchActive) this._select_places(this.placesButton);
+            this._select_places(this.placesButton);
         }));
         this.categoriesBox.add_actor(this.placesButton.actor);
         
