@@ -287,6 +287,7 @@ ApplicationsButton.prototype = {
         this._searchTimeoutId = 0;
         this._searchIconClickedId = 0;
         this._applicationsButtons = new Array();
+        this._placesButtons = new Array();
         this._selectedItemIndex = null;
         this._previousSelectedItemIndex = null;
         this._activeContainer = null;
@@ -408,7 +409,6 @@ ApplicationsButton.prototype = {
     },
 
     reDisplay : function() {
-        this._applicationsButtons = new Array();
         this._clearAll();
         this._display();
     },
@@ -578,15 +578,11 @@ ApplicationsButton.prototype = {
         this.selectedAppDescription = new St.Label({ style_class: 'selected-app-description', text: "" });
         this.selectedAppBox.add_actor(this.selectedAppDescription);
         section.actor.add_actor(this.selectedAppBox);
+        
+        this._initButtons();
     },
     
     _clearApplicationsBox: function(selectedActor){
-       let actors = this.applicationsBox.get_children();
-		 for (var i=0; i<actors.length; i++) {
-			let actor = actors[i];			
-			this.applicationsBox.remove_actor(actor);	
-		 }
-       
        let actors = this.categoriesBox.get_children();
 
          for (var i=0; i<actors.length; i++){
@@ -602,43 +598,64 @@ ApplicationsButton.prototype = {
        if (dir) this._displayButtons(this._listApplications(dir.get_menu_id()));
        else this._displayButtons(this._listApplications(null));
 	 },
+     
+    _initButtons: function() {
+        let actors = this.applicationsBox.get_children();
+        for (var i=0; i<actors.length; i++) {
+			let actor = actors[i];			
+			this.applicationsBox.remove_actor(actor);	
+        }
+         
+        var apps = this._listApplications(null, "");
+        this._applicationsButtons = new Array();
+        for (var i=0; i<apps.length; i++) {
+           let app = apps[i];			
+           let applicationButton = new ApplicationButton(app);
+           applicationButton.actor.hide();
+           applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
+              this.selectedAppTitle.set_text("");
+              this.selectedAppDescription.set_text("");
+           }));
+           this._addEnterEvent(applicationButton, Lang.bind(this, function() {
+               this.selectedAppTitle.set_text(applicationButton.app.get_name());
+               if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
+               else this.selectedAppDescription.set_text("");
+               this._clearSelections(this.applicationsBox);
+               applicationButton.actor.style_class = "category-button-selected";
+               this._scrollToButton(applicationButton);
+           }));
+           this._applicationsButtons[app] = applicationButton;
+           this.applicationsBox.add_actor(this._applicationsButtons[app].actor);
+        }
+        
+        var places = new Array();
+        var bookmarks = this._listBookmarks("");
+        for (var i in bookmarks) places.push(bookmarks[i]);
+        var devices = this._listDevices("");
+        for (var i in devices) places.push(devices[i]);
+        this._placesButtons = new Array();
+        for (var i=0; i<places.length; i++) {
+           let place = places[i];
+           let button = new PlaceButton(place, place.name);
+           button.actor.hide();
+           this._addEnterEvent(button, Lang.bind(this, function() {
+               this._clearSelections(this.applicationsBox);
+               button.actor.style_class = "category-button-selected";
+               this._scrollToButton(button);
+           }));
+           global.log(place.place_id);
+           this._placesButtons[place.place_id] = button;
+           this.applicationsBox.add_actor(button.actor);
+        }
+        
+    },
     
     _displayButtons: function(apps, places){
-         if (apps){
-            for (var i=0; i<apps.length; i++) {
-               let app = apps[i];			
-               if (!this._applicationsButtons[app]){
-                  let applicationButton = new ApplicationButton(app);
-                  applicationButton.actor.connect('leave-event', Lang.bind(this, function() {
-                     this.selectedAppTitle.set_text("");
-                     this.selectedAppDescription.set_text("");
-                  }));
-                  this._addEnterEvent(applicationButton, Lang.bind(this, function() {
-                      this.selectedAppTitle.set_text(applicationButton.app.get_name());
-                      if (applicationButton.app.get_description()) this.selectedAppDescription.set_text(applicationButton.app.get_description());
-                      else this.selectedAppDescription.set_text("");
-                      this._clearSelections(this.applicationsBox);
-                      applicationButton.actor.style_class = "category-button-selected";
-                      this._scrollToButton(applicationButton);
-                  }));
-                  this._applicationsButtons[app] = applicationButton;
-               }
-               this.applicationsBox.add_actor(this._applicationsButtons[app].actor);
-            }
-         }
-
-         if (places){
-            for (var i=0; i<places.length; i++) {
-               let place = places[i];
-               let button = new PlaceButton(place, place.name);
-               this._addEnterEvent(button, Lang.bind(this, function() {
-                   this._clearSelections(this.applicationsBox);
-                   button.actor.style_class = "category-button-selected";
-                   this._scrollToButton(button);
-               }));
-               this.applicationsBox.add_actor(button.actor);
-            }
-         }
+         for (var app in this._applicationsButtons) this._applicationsButtons[app].actor.hide();
+         if (apps) for (var i in apps) this._applicationsButtons[apps[i]].actor.show();
+         
+         for (var place_id in this._placesButtons) this._placesButtons[place_id].actor.hide();
+         if (places) for (var i in places) this._placesButtons[places[i].place_id].actor.show();
     },
      
      _select_places : function(button) {			 
@@ -713,6 +730,7 @@ ApplicationsButton.prototype = {
        let bookmarks = Main.placesManager.getBookmarks();
        var res = new Array();
        for (let id = 0; id < bookmarks.length; id++) {
+          bookmarks[id].place_id = "bookmark_"+id;
           if (!pattern || bookmarks[id].name.toLowerCase().indexOf(pattern)!=-1) res.push(bookmarks[id]);
        }
        return res;
@@ -722,6 +740,7 @@ ApplicationsButton.prototype = {
        let devices = Main.placesManager.getMounts();
        var res = new Array();
        for (let id = 0; id < devices.length; id++) {
+          devices[id].place_id = "device_"+id;
           if (!pattern || devices[id].name.toLowerCase().indexOf(pattern)!=-1) res.push(devices[id]);
        }
        return res;
