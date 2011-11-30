@@ -38,4 +38,7 @@ sudo cp -R mgse-bottompanel/usr /
 sudo rm -rf /usr/share/gnome-shell/extensions/notifications@linuxmint.com
 sudo cp -R mgse-notifications/usr /
 
+sudo rm -rf /usr/share/gnome-shell/extensions/trash@linuxmint.com
+sudo cp -R mgse-trash/usr /
+
 sudo glib-compile-schemas /usr/share/glib-2.0/schemas/
