@@ -1,3 +1,9 @@
+mgse-alttab (1.0.2) lisa; urgency=low
+
+  * Fix for bug #889442 (alt-tab not displaying all available applications) 
+
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 30 Nov 2011 14:31:49 +0000
+
 mgse-alttab (1.0.1) lisa; urgency=low
 
   * Changed compatibility to "3.2"
