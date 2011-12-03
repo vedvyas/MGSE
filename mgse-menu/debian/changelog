@@ -1,3 +1,10 @@
+mgse-menu (1.1.5) lisa; urgency=low
+
+  * Bug fix for keyboard navigation
+  * Bug fix for category hover when search results are shown
+
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 01 Dec 2011 09:31:25 +0000
+
 mgse-menu (1.1.4) lisa; urgency=low
 
   * Corrected bug with keyboard navigation
