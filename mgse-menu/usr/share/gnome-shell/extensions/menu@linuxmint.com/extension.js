@@ -177,12 +177,20 @@ MintButton.prototype = {
 
         this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
         this.actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));
-        this.menu = new PopupMenu.PopupMenu(this.actor, menuAlignment, mintMenuOrientation);
+        
+        this._menuAlignment = menuAlignment;
+        this._resetMenu();
+    },
+    
+    _resetMenu: function(){
+        this.menu = new PopupMenu.PopupMenu(this.actor, this._menuAlignment, mintMenuOrientation);
         this.menu.actor.add_style_class_name('application-menu-background');
         this.menu.connect('open-state-changed', Lang.bind(this, this._onOpenStateChanged));
         //this.menu.actor.connect('key-press-event', Lang.bind(this, this._onMenuKeyPress));
         Main.uiGroup.add_actor(this.menu.actor);
         this.menu.actor.hide();
+        
+        Main.panel._menus.addMenu(this.menu);
     },
 
     _onButtonPress: function(actor, event) {
@@ -410,12 +418,8 @@ ApplicationsButton.prototype = {
 
     reDisplay : function() {
         this._applicationsButtons = new Array();
-        this._clearAll();
+        this._resetMenu();
         this._display();
-    },
-
-    _clearAll : function() {
-        this.menu.removeAll();
     },
    
     _loadCategory: function(dir) {
@@ -810,7 +814,6 @@ function enable() {
         
     appsMenuButton = new ApplicationsButton();
     Main.panel._leftBox.insert_actor(appsMenuButton.actor, 0);
-    Main.panel._menus.addMenu(appsMenuButton.menu);
     
     /* Tell the main panel we're here */
     Main.panel._mintMenu = appsMenuButton;
