@@ -228,14 +228,7 @@ AppMenuButton.prototype = {
             if ( this.rightClickMenu.isOpen ) {
                 this.rightClickMenu.toggle();                
             }
-            if ( this.metaWindow.has_focus() ) {
-                this.metaWindow.minimize(global.get_current_time());
-                this.actor.remove_style_pseudo_class('focus');
-            }
-            else {
-                this.metaWindow.activate(global.get_current_time());
-                this.actor.add_style_pseudo_class('focus');	    
-            }
+            this._windowHandle(false);
         } else if (Shell.get_event_state(event) & Clutter.ModifierType.BUTTON3_MASK) {
             if (!this.rightClickMenu.isOpen) {
                 // Setting the max-height won't do any good if the minimum height of the
@@ -248,6 +241,36 @@ AppMenuButton.prototype = {
             }
             this.rightClickMenu.toggle();   
         }   
+    },
+
+    _windowHandle: function(fromDrag){
+        if ( this.metaWindow.has_focus() ) {
+            if (fromDrag){
+                return;
+            }
+            
+            this.metaWindow.minimize(global.get_current_time());
+            this.actor.remove_style_pseudo_class('focus');
+        }
+        else {
+            this.metaWindow.activate(global.get_current_time());
+            this.actor.add_style_pseudo_class('focus');
+        }
+    },
+
+    handleDragOver: function(source, actor, x, y, time) {
+        if (typeof(WindowList.dragEnterTime) == 'undefined') {
+            WindowList.dragEnterTime = time;
+        } else {
+            if (time > (WindowList.dragEnterTime + 3000))
+            {
+                WindowList.dragEnterTime = time;
+            }
+        }
+                
+        if (time > (WindowList.dragEnterTime + 300)) {
+            this._windowHandle(true);
+        }
     },
     
     show: function() {
