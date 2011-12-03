@@ -39,8 +39,10 @@ AppMenuButtonRightClickMenu.prototype = {
         //Main.chrome.addActor(this.actor, { visibleInOverview: true,
         //                                   affectsStruts: false });
         this.actor.hide();
-        actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));
 
+        actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));
+        this.connect('open-state-changed', Lang.bind(this, this._onToggled));
+        
         this.metaWindow = metaWindow;
         this.app = app;
 
@@ -66,7 +68,20 @@ AppMenuButtonRightClickMenu.prototype = {
             this.addMenuItem(this.itemCloseWindow);
             this.addMenuItem(this.itemMaximizeWindow);
             this.addMenuItem(this.itemMinimizeWindow);
-        }            
+        }
+    },
+    
+    _onToggled: function(actor, state){        
+        if (state) {
+            if (Main.panel._mintWindowList.actor != null) {
+                let coord = this.mouseEvent.get_coords();
+                let panelOffset = Main.panel._mintWindowList.actor.get_geometry().x
+                let buttonOffset = actor.sourceActor.get_geometry().x;
+                let buttonWidth = (actor.sourceActor.get_geometry().width / 2);
+                
+                this.actor.set_position((0 - buttonOffset - buttonWidth - panelOffset) + coord[0] - 30, 0);
+            }
+        }
     },
     
     _onWindowMinimized: function(actor, event){
@@ -239,6 +254,7 @@ AppMenuButton.prototype = {
                 //                         Math.round(200) +
                 //                         'px;');
             }
+            this.rightClickMenu.mouseEvent = event;
             this.rightClickMenu.toggle();   
         }   
     },
