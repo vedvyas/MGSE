@@ -48,12 +48,14 @@ AppMenuButtonRightClickMenu.prototype = {
 
         this.itemCloseWindow = new PopupMenu.PopupMenuItem('Close');
         this.itemCloseWindow.connect('activate', Lang.bind(this, this._onCloseWindowActivate));        
+
         if (metaWindow.minimized)
             this.itemMinimizeWindow = new PopupMenu.PopupMenuItem('Restore');
         else
             this.itemMinimizeWindow = new PopupMenu.PopupMenuItem('Minimize');
         this.itemMinimizeWindow.connect('activate', Lang.bind(this, this._onMinimizeWindowActivate));        
-        if (metaWindow.get_maximized())
+        
+        if (metaWindow.maximized_horizontally && metaWindow.maximized_vertically)
             this.itemMaximizeWindow = new PopupMenu.PopupMenuItem(_("Unmaximize"));
         else
             this.itemMaximizeWindow = new PopupMenu.PopupMenuItem(_('Maximize'));
@@ -205,14 +207,17 @@ AppMenuButton.prototype = {
 
 		let icon = this.app.create_icon_texture(16);
 		//let icon = this.app.get_faded_icon(1.15 * PANEL_ICON_SIZE);		        
-        this._label.set_text(this.metaWindow.get_title());
+        if (metaWindow.minimized)
+            this._label.set_text("[" + this.metaWindow.get_title() + "]");
+        else
+            this._label.set_text(this.metaWindow.get_title());
         this._iconBox.set_child(icon);
         
         if(animation){
 			this.startAnimation(); 
 			this.stopAnimation();
 		}
-        
+		
         //set up the right click menu
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this.rightClickMenu = new AppMenuButtonRightClickMenu(this.actor, this.app, this.metaWindow);
@@ -432,6 +437,10 @@ WindowList.prototype = {
                                         Lang.bind(this, this._refreshItems));
         global.window_manager.connect('minimize',
                                         Lang.bind(this, this._onMinimize));
+        global.window_manager.connect('maximize',
+                                        Lang.bind(this, this._onMaximize));
+        global.window_manager.connect('unmaximize',
+                                        Lang.bind(this, this._onMaximize));
         global.window_manager.connect('map',
                                         Lang.bind(this, this._onMap));
         
@@ -476,24 +485,45 @@ WindowList.prototype = {
         this._onFocus();
     },
 
-    _onMinimize: function(shellwm, actor) {
+    _onWindowStateChange: function(state, actor) {
         for ( let i=0; i<this._windows.length; ++i ) {
-            if ( this._windows[i].metaWindow == actor.get_meta_window() ) {                
-                this._windows[i]._label.set_text("["+ actor.get_meta_window().get_title() +"]");     
-                this._windows[i].rightClickMenu.itemMinimizeWindow.label.set_text("Restore");           
-                return;
+            if ( this._windows[i].metaWindow == actor.get_meta_window() ) {
+                let windowReference = this._windows[i];
+                let menuReference = this._windows[i].rightClickMenu;
+                
+                if (state == 'minimize') {
+                    windowReference._label.set_text("["+ actor.get_meta_window().get_title() +"]");
+                    menuReference.itemMinimizeWindow.label.set_text(_("Restore"));
+                    
+                    return;
+                } else if (state == 'map') {
+                    windowReference._label.set_text(actor.get_meta_window().get_title());
+                    menuReference.itemMinimizeWindow.label.set_text(_("Minimize"));
+                    
+                    return;
+                } else if (state == 'maximize') {
+                    if (actor.get_meta_window().get_maximized()) {
+                        menuReference.itemMaximizeWindow.label.set_text(_("Unmaximize"));
+                    } else {
+                        menuReference.itemMaximizeWindow.label.set_text(_("Maximize"));
+                    }
+                    
+                    return;
+                }
             }
         }
     },
     
+    _onMinimize: function(shellwm, actor) {
+        this._onWindowStateChange('minimize', actor);
+    },
+    
+    _onMaximize: function(shellwm, actor) {
+        this._onWindowStateChange('maximize', actor);
+    },
+    
     _onMap: function(shellwm, actor) {
-        for ( let i=0; i<this._windows.length; ++i ) {
-            if ( this._windows[i].metaWindow == actor.get_meta_window() ) {                
-                this._windows[i]._label.set_text(actor.get_meta_window().get_title());                
-                this._windows[i].rightClickMenu.itemMinimizeWindow.label.set_text("Minimize");
-                return;
-            }
-        }
+        this._onWindowStateChange('map', actor);
     },
   
     _windowAdded: function(metaWorkspace, metaWindow) {
