@@ -1,3 +1,13 @@
+mgse-windowlist (1.0.7) lisa; urgency=low
+
+  * Drag onto windowlist button, makes the window get focus.
+  * Right click menu now aligns with the mouse pointer
+  * Better label support for the right click menu
+  * Bugfix: minimized window label did not contain '[' and ']' after switching workspaces.
+  * Possible bugfix: unmaximized state detection when creating right click menu
+
+ -- Clement Lefebvre <root@linuxmint.com>  Tue, 06 Dec 2011 14:27:22 +0000
+
 mgse-windowlist (1.0.6) lisa; urgency=low
 
   * Fixes in default stylesheet
