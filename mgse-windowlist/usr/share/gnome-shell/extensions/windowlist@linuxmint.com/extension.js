@@ -81,7 +81,7 @@ AppMenuButtonRightClickMenu.prototype = {
                 let buttonOffset = actor.sourceActor.get_geometry().x;
                 let buttonWidth = (actor.sourceActor.get_geometry().width / 2);
                 
-                this.actor.set_position((0 - buttonOffset - buttonWidth - panelOffset) + coord[0] - 30, 0);
+                this.actor.set_position((0 - buttonOffset - buttonWidth - panelOffset) + coord[0], 0);
             }
         }
     },
