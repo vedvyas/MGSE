@@ -200,6 +200,10 @@ AppMenuButtonTooltip.prototype = {
         
         this._tooltip.show();
         this._visible = true;
+    },
+    
+    set_text: function(text) {
+        this._tooltip.set_label(text);
     }
 }
 
@@ -272,6 +276,7 @@ AppMenuButton.prototype = {
         
         this._updateCaptionId = this.metaWindow.connect('notify::title', Lang.bind(this, function () {
             this._label.set_text(this.metaWindow.get_title());
+            if (this._tooltip) this._tooltip.set_text(this.metaWindow.get_title());
         }));
                 
         this._spinner = new Panel.AnimatedIcon('process-working.svg', PANEL_ICON_SIZE);
