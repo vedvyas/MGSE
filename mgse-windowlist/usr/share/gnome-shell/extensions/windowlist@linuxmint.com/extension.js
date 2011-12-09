@@ -130,6 +130,79 @@ AppMenuButtonRightClickMenu.prototype = {
 
 };
 
+function AppMenuButtonTooltip(appButton) {
+    this._init(appButton);
+}
+
+AppMenuButtonTooltip.prototype = {
+    _init: function(appButton) {
+        this._tooltip = new St.Tooltip();
+        this._tooltip.set_label(appButton.metaWindow.get_title());
+        Main.uiGroup.add_actor(this._tooltip);
+        
+        appButton.actor.connect('enter-event', Lang.bind(this, this._onEnterEvent));
+        appButton.actor.connect('leave-event', Lang.bind(this, this._onLeaveEvent));
+        appButton.actor.connect('motion-event', Lang.bind(this, this._onMotionEvent));
+        
+        this._showTimer = null;
+        this._visible = false;
+        this._appButton = appButton;
+    },
+    
+    _onMotionEvent: function(actor, event) {
+        Tweener.removeTweens(this);
+        if (!this._visible){
+            Tweener.addTween(this, {_currentTime: 0, time: 0.3, onComplete: Lang.bind(this, this._onTimerComplete)});
+            this._mousePosition = event.get_coords();
+        }
+    },
+    
+    _onEnterEvent: function(actor, event) {
+        Tweener.addTween(this, {_currentTime: 0, time: 0.3, onComplete: Lang.bind(this, this._onTimerComplete)});
+        this._mousePosition = event.get_coords();
+    },
+    
+    _onTimerComplete: function(){
+        this.show();
+    },
+    
+    _onLeaveEvent: function(actor, event) {
+        this.hide();
+    },
+    
+    hide: function() {
+        Tweener.removeTweens(this);
+        this._tooltip.hide();
+        this._visible = false;
+    },
+    
+    show: function() {
+        if (this._appButton.rightClickMenu.isOpen) return;
+        
+        Tweener.removeTweens(this);
+        
+        let tooltipHeight = this._tooltip.get_allocation_box().y2-this._tooltip.get_allocation_box().y1;
+        let tooltipWidth = this._tooltip.get_allocation_box().x2-this._tooltip.get_allocation_box().x1;
+        
+        var tooltipTop;
+        if (bottomPosition){
+            tooltipTop = Main.panel._mintPanel.actor.get_allocation_box().y1-tooltipHeight;
+        }else{
+            tooltipTop = this._appButton.actor.get_allocation_box().y2;
+        }
+        
+        let monitorWidth = Main.layoutManager.primaryMonitor.width;
+        var tooltipLeft = this._mousePosition[0]-(tooltipWidth/2);
+        if (tooltipLeft<0) tooltipLeft = 0;
+        if (tooltipLeft+tooltipWidth>monitorWidth) tooltipLeft = monitorWidth-tooltipWidth;
+        
+        this._tooltip.set_position(tooltipLeft, tooltipTop);
+        
+        this._tooltip.show();
+        this._visible = true;
+    }
+}
+
 function AppMenuButton(app, metaWindow, animation) {
     this._init(app, metaWindow, animation);
 }
@@ -222,6 +295,8 @@ AppMenuButton.prototype = {
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this.rightClickMenu = new AppMenuButtonRightClickMenu(this.actor, this.app, this.metaWindow);
         this._menuManager.addMenu(this.rightClickMenu);
+        
+        this._tooltip = new AppMenuButtonTooltip(this);
     },
     
     _onDestroy: function() {
@@ -244,6 +319,7 @@ AppMenuButton.prototype = {
     },
     
     _onButtonRelease: function(actor, event) {
+        this._tooltip.hide();
         if ( Shell.get_event_state(event) & Clutter.ModifierType.BUTTON1_MASK ) {
             if ( this.rightClickMenu.isOpen ) {
                 this.rightClickMenu.toggle();                
