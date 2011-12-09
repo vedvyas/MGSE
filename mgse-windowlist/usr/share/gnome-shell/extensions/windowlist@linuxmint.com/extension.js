@@ -41,6 +41,7 @@ AppMenuButtonRightClickMenu.prototype = {
         this.actor.hide();
 
         actor.connect('key-press-event', Lang.bind(this, this._onSourceKeyPress));
+        this.connect('open-state-changed', Lang.bind(this, this._onToggled));
         
         this.metaWindow = metaWindow;
         this.app = app;
@@ -258,6 +259,7 @@ AppMenuButton.prototype = {
                 //                         Math.round(200) +
                 //                         'px;');
             }
+            this.rightClickMenu.mouseEvent = event;
             this.rightClickMenu.toggle();   
         }   
     },
