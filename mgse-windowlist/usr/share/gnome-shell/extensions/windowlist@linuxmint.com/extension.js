@@ -204,6 +204,10 @@ AppMenuButtonTooltip.prototype = {
     
     set_text: function(text) {
         this._tooltip.set_label(text);
+    },
+    
+    destroy: function() {
+       this._tooltip.destroy();
     }
 }
 
@@ -306,6 +310,7 @@ AppMenuButton.prototype = {
     
     _onDestroy: function() {
         this.metaWindow.disconnect(this._updateCaptionId);
+        this._tooltip.destroy();
     },
     
     doFocus: function() {
