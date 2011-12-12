@@ -347,7 +347,9 @@ AppMenuButton.prototype = {
             }
             this.rightClickMenu.mouseEvent = event;
             this.rightClickMenu.toggle();   
-        }   
+        } else if (Shell.get_event_state(event) & Clutter.ModifierType.BUTTON2_MASK) {
+	    this.metaWindow.delete(global.get_current_time());
+        } 
     },
 
     _windowHandle: function(fromDrag){
