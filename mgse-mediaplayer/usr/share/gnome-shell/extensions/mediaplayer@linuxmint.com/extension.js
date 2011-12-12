@@ -639,15 +639,6 @@ Indicator.prototype = {
                 Lang.bind(this, this._removePlayer)
             );
         }
-        // show players if any on signal
-        this.menu.connect('players-loaded', Lang.bind(this,
-            function(sender, state) {
-                if (this._nbPlayers() == 0)
-                    this.actor.hide();
-                else
-                    this.actor.show();
-            }
-        ));
     },
 
     _nbPlayers: function() {
@@ -655,22 +646,19 @@ Indicator.prototype = {
     },
 
     _addPlayer: function(owner) {
-        // ensure menu is empty
-        if (this._nbPlayers() == 0)
-            this.menu.removeAll();
         this._players[owner] = new Player(this, owner);
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem())
         this.menu.addMenuItem(this._players[owner]);
-        this.menu.emit('players-loaded', true);
+        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem())
+        this.actor.show();
     },
 
     _removePlayer: function(owner) {
+        this._players[owner].destroy();
         delete this._players[owner];
-        this.menu.removeAll();
-        for (owner in this._players) { 
-            this._addPlayer(owner);
-        }
-        this.menu.emit('players-loaded', true);
-    }
+        if (this._nbPlayers() == 0)
+            this.actor.hide();
+    },
 };
 
 function init(metadata) {
