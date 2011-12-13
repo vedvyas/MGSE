@@ -430,6 +430,8 @@ Player.prototype = {
         this._mediaServerPlayer.connect('Seeked', Lang.bind(this, function(sender, value) {
             this._setPosition(sender, value);
         }));
+        
+        Mainloop.timeout_add(1000, Lang.bind(this, this._getPosition));
     },
 
     _getName: function() {
@@ -452,6 +454,7 @@ Player.prototype = {
     _setPosition: function(sender, value) {
         this._stopTimer();
         this._currentTime = value / 1000000;
+        this._updateTimer();
         if (this._playerStatus == "Playing")
             this._runTimer();
     },
@@ -460,6 +463,7 @@ Player.prototype = {
         this._mediaServerPlayer.getPosition(Lang.bind(this, 
             this._setPosition
         ));
+        Mainloop.timeout_add(1000, Lang.bind(this, this._getPosition));
     },
 
     _setMetadata: function(sender, metadata) {
@@ -580,23 +584,23 @@ Player.prototype = {
     },
 
     _runTimer: function() {
-        if (!Tweener.resumeTweens(this)) {
+        /*if (!Tweener.resumeTweens(this)) {
             Tweener.addTween(this,
                 { _currentTime: this._songLength, 
                   time: this._songLength - this._currentTime,
                   transition: 'linear',
                   onUpdate: Lang.bind(this, this._updateTimer) });
-        }
+        }*/
     },
 
     _pauseTimer: function() {
-        Tweener.pauseTweens(this);
+        //Tweener.pauseTweens(this);
     },
 
     _stopTimer: function() {
-        Tweener.removeTweens(this);
+        /*Tweener.removeTweens(this);
         this._currentTime = 0;
-        this._updateTimer();
+        this._updateTimer();*/
     },
 
     _formatTime: function(s) {
