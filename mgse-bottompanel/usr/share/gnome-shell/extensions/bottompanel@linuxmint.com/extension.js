@@ -220,14 +220,14 @@ BottomPanel.prototype = {
             let h = this.actor.get_theme_node().get_height();
             
 		        Tweener.addTween(this.actor,
-		                         { y: primary.y+primary.height-h,
-		                           time: AUTOHIDE_ANIMATION_TIME + 0.1,
+		                         { y: primary.y+primary.height - h,
+		                           time: AUTOHIDE_ANIMATION_TIME,
 		                           transition: 'easeOutQuad'
 		                         });
             
 		        Tweener.addTween(this.actor,
 		                         { opacity: 255,
-		                           time: AUTOHIDE_ANIMATION_TIME+0.2,
+		                           time: AUTOHIDE_ANIMATION_TIME * 1.2,
 		                           transition: 'easeOutQuad'
 		                         });
 
@@ -240,14 +240,14 @@ BottomPanel.prototype = {
             let primary = Main.layoutManager.primaryMonitor;
 
             Tweener.addTween(this.actor,
-		                         { y: primary.y+primary.height-5,
-		                           time: AUTOHIDE_ANIMATION_TIME,
+		                         { y: primary.y+primary.height - 5,
+		                           time: AUTOHIDE_ANIMATION_TIME * 0.8,
 		                           transition: 'easeOutQuad'
 		                         });
 
 		        Tweener.addTween(this.actor,
 		                         { opacity: 0,
-		                           time: AUTOHIDE_ANIMATION_TIME-0.1,
+		                           time: AUTOHIDE_ANIMATION_TIME * 0.8,
 		                           transition: 'easeOutQuad'
 		                         });
 
