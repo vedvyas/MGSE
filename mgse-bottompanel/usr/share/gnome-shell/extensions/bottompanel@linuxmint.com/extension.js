@@ -1,3 +1,7 @@
+/* -*- mode: js2; js2-basic-offset: 4; indent-tabs-mode: nil -*- */
+/* Trying to follow style conventions of previous authors */
+
+const Gio = imports.gi.Gio;
 const MessageTray = imports.ui.messageTray;
 const WindowManager = imports.ui.windowManager;
 const St = imports.gi.St;
@@ -6,9 +10,23 @@ const Lang = imports.lang;
 const Shell = imports.gi.Shell;
 const Main = imports.ui.main;
 const WorkspaceSwitcherPopup = imports.ui.workspaceSwitcherPopup;
+const Tweener = imports.ui.tweener;
+
+// Autohide adapted from fpmurphy's autohidetopbar extension, specifically
+// port to GS 3.2 by Kevin Kane and Carlo Marchiori
+const AUTOHIDE_ANIMATION_TIME = 0.4;
+
+// Enable/disable some logging (0 == off, otherwise on)
+const DEBUG = 0;
 
 const Gettext = imports.gettext.domain('gnome-shell-extensions');
 const _ = Gettext.gettext;
+
+function DEBUGLOG(msg) {
+    if (DEBUG != 0) {
+        global.log('bottompanel: ' + msg);
+    }
+}
 
 function MessageButton() {
     this._init();
@@ -112,6 +130,13 @@ BottomPanel.prototype = {
                                         name: 'bottomPanel',
                                         reactive: true });
         this.actor._delegate = this;
+        this.autohide = false;
+        this.last_click_time = 0;
+        this.hidden = false;
+        this.referenceY = 0;
+        this.doubleClickTimeout = 1000;
+        this.mouseSettings = 
+            new Gio.Settings({ schema: 'org.gnome.settings-daemon.peripherals.mouse' });
         
         this.leftBox = new St.BoxLayout({ reactive: true });
         this.actor.add(this.leftBox, { expand: true, y_fill: false });
@@ -121,12 +146,113 @@ BottomPanel.prototype = {
 
         let messageButton = new MessageButton();
         this.actor.add(messageButton.actor);
-
+        
+        // We'll turn this off when autohiding
         Main.layoutManager.addChrome(this.actor, { affectsStruts: true });
+        
+        // Follow changes to system double-click timeout
+        this.mouseSettings.connect(
+            'changed::double-click',
+            Lang.bind(this, 
+                      function() {
+                          this.doubleClickTimeout = 
+                              this.mouseSettings.get_int('double-click');
+                          DEBUGLOG('Updated double-click to ' + 
+                                   this.doubleClickTimeout);
+                      }));
+        
+        // Check for double-clicks to toggle use of autohide
+        this.actor.connect('button-release-event', 
+                           Lang.bind(this, this.checkToggleAutohide));
 
         this.actor.connect('style-changed', Lang.bind(this, this.relayout));
+        this.actor.connect('enter-event', Lang.bind(this, this.showpanel));
+        this.actor.connect('leave-event', Lang.bind(this, this.hidepanel));
         global.screen.connect('monitors-changed', Lang.bind(this,
                                                      this.relayout));
+    },
+
+    checkToggleAutohide: function(actor, event)
+    {
+        DEBUGLOG('Something happened at ' + event.get_time());
+        DEBUGLOG(event);
+
+        DEBUGLOG('Double-click timeout is ' + this.doubleClickTimeout);
+        
+        // Check for two successive clicks within timeout period
+        let current_time = event.get_time();
+
+        if (this.last_click_time == 0)
+        {
+            this.last_click_time = current_time;
+            return;
+        }
+        else if ((current_time - this.last_click_time) > this.doubleClickTimeout)
+        {
+            this.last_click_time = 0;
+            return 0;
+        }
+        
+        this.last_click_time = 0;
+        
+        this.toggleAutohide();
+    },
+    
+    toggleAutohide: function() {
+        if (this.autohide == true) {
+            this.autohide = false;
+            Main.layoutManager.removeChrome(this.actor) ;
+            Main.layoutManager.addChrome(this.actor, { affectsStruts: true });
+        }
+        else {
+            this.autohide = true;
+            Main.layoutManager.removeChrome(this.actor) ;
+            Main.layoutManager.addChrome(this.actor, { affectsStruts: false });
+        }
+        
+        DEBUGLOG("Set autohide status to " + this.autohide);
+    },
+
+    showpanel: function() {
+        if (this.autohide == true && this.hidden == true) {
+            let primary = Main.layoutManager.primaryMonitor;
+
+            let h = this.actor.get_theme_node().get_height();
+            
+		        Tweener.addTween(this.actor,
+		                         { y: primary.y+primary.height-h,
+		                           time: AUTOHIDE_ANIMATION_TIME + 0.1,
+		                           transition: 'easeOutQuad'
+		                         });
+            
+		        Tweener.addTween(this.actor,
+		                         { opacity: 255,
+		                           time: AUTOHIDE_ANIMATION_TIME+0.2,
+		                           transition: 'easeOutQuad'
+		                         });
+
+            this.hidden = false;
+        }
+    },
+
+    hidepanel: function() {
+        if (this.autohide == true && this.hidden == false) {
+            let primary = Main.layoutManager.primaryMonitor;
+
+            Tweener.addTween(this.actor,
+		                         { y: primary.y+primary.height-5,
+		                           time: AUTOHIDE_ANIMATION_TIME,
+		                           transition: 'easeOutQuad'
+		                         });
+
+		        Tweener.addTween(this.actor,
+		                         { opacity: 0,
+		                           time: AUTOHIDE_ANIMATION_TIME-0.1,
+		                           transition: 'easeOutQuad'
+		                         });
+
+            this.hidden = true;
+        }
     },
 
     relayout: function() {
@@ -166,6 +292,10 @@ function init(extensionMeta) {
     origShowTray = MessageTray.MessageTray.prototype._showTray;
     myShowTray = function() {
         let h = bottomPanel.actor.get_theme_node().get_height();
+        if (bottomPanel.hidden == true) 
+        {
+            h = 0;
+        }
         this._tween(this.actor, '_trayState', MessageTray.State.SHOWN,
                     { y: - this.actor.height - h,
                       time: MessageTray.ANIMATION_TIME,
